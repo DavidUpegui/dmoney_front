@@ -5,13 +5,13 @@
     "paths": [".agents/skills", ".opencode/skills"]
   },
   "references": {
-    "contract": {
-      "path": "../dmoney_platform/contracts",
-      "description": "Shared HTTP contract with dmoney_back. Curated semantics in API_CONTRACT.md; generated machine truth in openapi.json. Read before adding or changing any API call."
+    "backend": {
+      "path": "../dmoney_back/docs",
+      "description": "Backend API contract and docs. api.md is the HTTP API (endpoints, request/response models, errors) — read it before adding or changing any API call. Also architecture.md and testing.md."
     },
     "platform": {
       "path": "../dmoney_platform/docs",
-      "description": "Cross-repo business docs (docs/business) and technical docs (docs/technical) for dmoney: product context, domain glossary, and architecture."
+      "description": "Cross-repo business docs (docs/business) and technical docs (docs/technical) for dmoney."
     }
   }
 }
