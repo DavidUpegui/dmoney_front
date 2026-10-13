@@ -26,9 +26,9 @@ priority.
 
 ## Workflow
 
-1. **Spec** — write `spec.md` before touching code: *requirements*, *navigation
-   & routes*, *screens & UI*, *data fetching & API*, *data model*, *business
-   rules*, *edge cases*, and *acceptance criteria*.
+1. **Spec** — write `spec.md` before touching code: *UI / UX Directives*,
+   *requirements*, *navigation & routes*, *screens & UI*, *data fetching & API*,
+   *data model*, *business rules*, *edge cases*, and *acceptance criteria*.
 2. **Plan** — break the spec into work items in `plan.md`, mapped to the Expo
    `src/` layout (`app/` → `screens/` → `components/` → `hooks/` → `utils/`).
 3. **Implement** — work through `tasks.md`, ticking items off as they land.
@@ -43,11 +43,14 @@ priority.
   explicitly (never leave them divergent).
 - Routes are described against the actual Expo Router file tree (`src/app/...`).
 - Every data screen specifies its **four states**: loading, error, empty,
-  content.
+   content.
 - Business rules are stated as testable statements (Given/When/Then).
 - Split by **vertical slice**, never by layer.
-- Global rules (auth, design tokens, data-fetching conventions) live in
-  `AGENTS.md`/docs and are **not** repeated in every spec.
+- **Every spec carries the UI / UX Directives section** (from
+  `_template/spec.md`) — the design skills, tokens-only rule, spacing rhythm,
+  native-controls-first, motion, and accessibility apply to all UI work.
+- Global rules (auth, data-fetching conventions) live in `AGENTS.md`/docs and are
+  not repeated in every spec.
 
 ## Status markers
 

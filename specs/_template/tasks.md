@@ -10,6 +10,7 @@ Checklist of work items. Mark `[x]` when done.
 - [ ] Screens done (`src/screens/...`)
 - [ ] Components done (`src/components/...`)
 - [ ] Data fetching done (React Query hooks + API client)
+- [ ] UI/UX Directives applied (skills loaded; tokens only; native controls; motion)
 
 ## Tests
 - [ ] Component / hook tests
@@ -18,3 +19,4 @@ Checklist of work items. Mark `[x]` when done.
 - [ ] `npx tsc --noEmit` passes
 - [ ] `npx expo lint` passes
 - [ ] `npm test` (jest-expo) passes
+- [ ] Visual check on mobile + web (screenshots)

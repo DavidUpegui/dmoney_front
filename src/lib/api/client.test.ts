@@ -1,4 +1,4 @@
-import { api } from './client';
+import { api, setUnauthorizedHandler } from './client';
 import { tokenStore } from './token-store';
 
 jest.mock('./token-store', () => ({
@@ -82,5 +82,44 @@ describe('api client', () => {
     fetchMock.mockResolvedValue(jsonResponse(204, null));
 
     await expect(api.delete('/api/categories/x')).resolves.toBeUndefined();
+  });
+});
+
+describe('api client 401 handling', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    fetchMock.mockReset();
+  });
+
+  afterEach(() => {
+    setUnauthorizedHandler(null);
+  });
+
+  it('invokes the global handler on 401 for a protected path', async () => {
+    mockedTokenStore.get.mockResolvedValue('token-123');
+    const handler = jest.fn();
+    setUnauthorizedHandler(handler);
+    fetchMock.mockResolvedValue(
+      jsonResponse(401, { status: 401, error: 'Unauthorized', message: 'expired' }),
+    );
+
+    await expect(api.get('/api/categories')).rejects.toMatchObject({ status: 401 });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not invoke the global handler for /auth endpoints', async () => {
+    mockedTokenStore.get.mockResolvedValue(null);
+    const handler = jest.fn();
+    setUnauthorizedHandler(handler);
+    fetchMock.mockResolvedValue(
+      jsonResponse(401, { status: 401, error: 'Unauthorized', message: 'bad credentials' }),
+    );
+
+    await expect(api.post('/auth/login', { email: 'a@b.com' })).rejects.toMatchObject({
+      status: 401,
+    });
+
+    expect(handler).not.toHaveBeenCalled();
   });
 });

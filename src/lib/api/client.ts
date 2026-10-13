@@ -5,6 +5,20 @@ import { tokenStore } from './token-store';
 
 type RequestOptions = Omit<RequestInit, 'body'> & { body?: unknown };
 
+type UnauthorizedHandler = () => void;
+
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+/**
+ * Registers a single global handler invoked when a protected request returns
+ * `401`. The auth provider uses it to clear the session so the route gate
+ * bounces back to Login. Auth endpoints (`/auth/*`) are excluded so a failed
+ * login surfaces inline instead of triggering a session reset.
+ */
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
+  unauthorizedHandler = handler;
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const headers = new Headers(options.headers);
   headers.set('Accept', 'application/json');
@@ -34,6 +48,9 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
 
   if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/auth')) {
+      unauthorizedHandler?.();
+    }
     throw await toApiError(response);
   }
 

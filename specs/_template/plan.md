@@ -15,6 +15,13 @@ Tick them off in `tasks.md` as they are implemented.
 
 - [ ] Reusable UI pieces (if any)
 
+## UI / design (skills-based)
+
+- [ ] `frontend-design` pass: layout, spacing, type, color decisions for each screen
+- [ ] `expo-design-system` / `vercel-react-native-skills`: tokens only, no hardcoded values
+- [ ] `expo-native-ui` / `expo-ui`: native controls, margins, grouped sections
+- [ ] `expo-animation`: press feedback / transitions, reduced motion respected
+
 ## Data fetching (`src/hooks/...`, `src/lib/api/...`)
 
 - [ ] API client + typed responses

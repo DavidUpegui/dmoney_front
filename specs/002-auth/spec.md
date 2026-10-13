@@ -1,8 +1,46 @@
 # Feature: Authentication
 
-- **Status:** `draft`
+- **Status:** `in-progress` (UI revision — native-restraint redesign)
 - **Folder:** `002-auth`
 - **Related area:** `auth`
+
+## UI / UX Directives
+
+Applies to every screen in this feature. Before writing UI code, load the skills
+`frontend-design`, `expo-design-system`, `expo-native-ui`, `expo-ui`,
+`expo-animation`, `vercel-react-native-skills` (and `web-design-guidelines` for
+the web target), routing the work through `expo-overview`.
+
+- **Tokens only** — every color, space, radius, type size, and motion value comes
+  from `@/theme`; no hardcoded values in screens or components.
+- **Spacing rhythm** — 4-pt grid; screens pad 20 horizontally; group related
+  fields into inset sections; separate with `gap`, not ad-hoc margins.
+- **Typography** — one system type scale; build hierarchy with weight and color
+  before size; money uses tabular figures.
+- **Native controls first** — reach for `@expo/ui` (sheets, pickers, switches,
+  grouped rows, form sections) before RN built-ins or community libraries;
+  native stack + `NativeTabs` for navigation; `Pressable` over Touchables.
+- **Semantic color** — light/dark via `Color` from `expo-router`; income and
+  outcome use their tokens.
+- **Four states** — data screens implement loading / error / empty / content;
+  empty states invite an action.
+- **Motion** — user-triggered feedback only (press, reveal, confirm); animate
+  transform/opacity; respect reduced motion; no decorative entrances.
+- **Accessibility** — labelled fields and controls, roles, visible focus,
+  contrast, Dynamic Type.
+- **Copy** — sentence case, active voice, the user's vocabulary; errors state
+  what happened and how to fix it.
+
+### Direction: Native restraint
+
+- **Type** — the system face (SF Pro / Roboto) at the `@/theme` scale; the
+  `dmoney` wordmark sits at `largeTitle`; money uses tabular figures.
+- **Color** — semantic tokens only; the accent is `primary` (system blue);
+  `income`/`outcome` are reserved for amounts, never for chrome.
+- **Structure** — inset grouped sections (not drop-shadowed cards); generous
+  margins; hierarchy from weight and color, not many sizes.
+- **Motion** — press feedback and error/success reveal only; reduced motion
+  honored.
 
 ## 1. Overview
 
@@ -40,6 +78,13 @@ The token is the only credential carried between requests.
   `expo-secure-store`.
 - **NFR-2** — The auth gate must not flash Login/Tabs during hydration.
 - **NFR-3** — Accessibility: forms have labelled fields and readable errors.
+- **NFR-4** — UI/UX: Login/Register/Settings follow the UI / UX Directives —
+  tokens only (no hardcoded color/space/type), screen padding 20, related fields
+  grouped into inset sections, native controls/`Pressable`.
+- **NFR-5** — Adaptivity: correct in light and dark mode and under Dynamic Type
+  (no clipped labels); server-supplied text wraps.
+- **NFR-6** — Motion: press feedback on submit/logout and a reveal for the
+  inline banner; all motion respects reduced motion.
 
 ## 3. Navigation & Routes
 
@@ -60,13 +105,25 @@ src/app/
 
 ## 4. Screens & UI
 
-| Screen | Route | States & affordances |
-|--------|-------|----------------------|
-| `Login` | `/login` | idle form; submitting (button disabled + spinner); error → inline banner with `message`; no content/empty state |
-| `Register` | `/register` | same pattern; success → navigate to Login (or auto-login) |
-| `Settings` | `/settings` | shows logged-in context + **Cerrar sesión** (logout) button |
+Layout follows the Native-restraint direction: a padded screen (20 px), a brand
+block, one **inset grouped section** per form, and a single full-width primary
+action. Hierarchy comes from weight and color, not many type sizes.
 
-Reusable: `TextInput` (labelled), `Button` from 001-foundation.
+| Screen | Route | Layout | States & affordances |
+|--------|-------|--------|----------------------|
+| `Login` | `/login` | brand block → inset form section (Email, Password) → primary action → footer link | idle form; submitting → button disabled + spinner; error → inline banner with `message`; success → tabs |
+| `Register` | `/register` | brand block → inset form section (Name, Email, Password) → primary action → footer link | same; success → navigate to Login with email prefilled + success banner |
+| `Settings` | `/settings` | large title → inset section (signed-in context) → inset section (destructive row **Cerrar sesión**) | logout row; destructive styling; native confirm on native, immediate on web |
+
+Components:
+
+- Reused from 001-foundation: `<Screen>`, `<TextInput>` (labelled), `<Button>`,
+  `<FormBanner>`, `<ThemedText>`.
+- New (added to the design system in this feature): `<BrandMark>` (the `dmoney`
+  wordmark), `<FormSection>` (inset grouped container), `<ListRow>` (inset row
+  with optional chevron/destructive tone) used by Settings.
+- Inputs and the button use a minimum touch height of 44 (button 52); the submit
+  button is full width.
 
 ## 5. Data Fetching & API
 
@@ -146,6 +203,14 @@ Session state: `{ token: string } | null`, derived from `tokenStore`.
   cleared and Login is shown.
 - **AC-7** — Given blank required fields, when submitting, then submit is
   blocked with field-level errors.
+- **AC-8** — Given the auth screens, when audited, then no hardcoded
+  color/space/type values appear outside `@/theme` (UI / UX Directives).
+- **AC-9** — Given light and dark system themes, when opening Login, Register,
+  and Settings, then each renders with the correct semantic tokens.
+- **AC-10** — Given reduced motion is enabled, when submitting a form, then no
+  non-essential animation plays while the loading/disabled state still shows.
+- **AC-11** — Given a small display / large text size, when opening the forms,
+  then labels, inputs, and errors do not clip or overlap.
 
 ## 10. Out of Scope
 

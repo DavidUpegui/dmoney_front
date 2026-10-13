@@ -1,4 +1,4 @@
-import { colors, radius, shadows, spacing, type } from '@/theme';
+import { colors, control, layout, motion, radius, shadows, spacing, type } from '@/theme';
 
 describe('theme tokens', () => {
   it('exposes semantic color tokens', () => {
@@ -29,5 +29,17 @@ describe('theme tokens', () => {
     expect(radius.md).toBe(12);
     expect(radius.full).toBe(9999);
     expect(typeof shadows.card).toBe('string');
+  });
+
+  it('defines grouped surfaces for inset sections', () => {
+    expect(colors.groupedSurface).toBeDefined();
+    expect(colors.groupedCell).toBeDefined();
+  });
+
+  it('defines layout, control and motion tokens', () => {
+    expect(layout.screenPadding).toBe(20);
+    expect(control.md).toBe(44);
+    expect(control.lg).toBe(52);
+    expect(motion.base).toBe(200);
   });
 });

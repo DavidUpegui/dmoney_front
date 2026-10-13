@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   StyleSheet,
   TextInput as RNTextInput,
@@ -7,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-import { colors, radius, spacing, type } from '@/theme';
+import { colors, control, radius, spacing, type } from '@/theme';
 import { ThemedText } from './themed-text';
 
 type TextInputFieldProps = TextInputProps & {
@@ -16,21 +17,44 @@ type TextInputFieldProps = TextInputProps & {
   containerStyle?: StyleProp<ViewStyle>;
 };
 
-export function TextInput({ label, error, containerStyle, style, ...props }: TextInputFieldProps) {
+export function TextInput({
+  label,
+  error,
+  containerStyle,
+  style,
+  onFocus,
+  onBlur,
+  ...props
+}: TextInputFieldProps) {
+  const [focused, setFocused] = useState(false);
+
   return (
     <View style={[styles.container, containerStyle]}>
       <ThemedText variant="subhead">{label}</ThemedText>
       <RNTextInput
         accessibilityLabel={label}
         placeholderTextColor={colors.textSecondary}
-        style={[styles.input, error != null && styles.inputError, style]}
+        onFocus={(event) => {
+          setFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setFocused(false);
+          onBlur?.(event);
+        }}
+        style={[
+          styles.input,
+          focused && styles.inputFocused,
+          error != null && styles.inputError,
+          style,
+        ]}
         {...props}
       />
-      {error != null && (
+      {error != null ? (
         <ThemedText variant="caption" style={styles.error}>
           {error}
         </ThemedText>
-      )}
+      ) : null}
     </View>
   );
 }
@@ -41,12 +65,18 @@ const styles = StyleSheet.create({
   },
   input: {
     ...type.body,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
+    minHeight: control.md,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: radius.md,
     borderCurve: 'continuous',
-    paddingHorizontal: spacing.sm,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    color: colors.text,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
   },
   inputError: {
     borderColor: colors.danger,

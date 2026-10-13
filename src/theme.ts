@@ -40,6 +40,16 @@ export const colors = {
   onPrimary: '#ffffff',
   income: '#34c759',
   outcome: '#ff3b30',
+  groupedSurface: Platform.select({
+    ios: Color.ios.systemGroupedBackground,
+    android: Color.android.dynamic.surfaceContainerLow,
+    default: '#f2f2f7',
+  })!,
+  groupedCell: Platform.select({
+    ios: Color.ios.secondarySystemGroupedBackground,
+    android: Color.android.dynamic.surfaceContainer,
+    default: '#ffffff',
+  })!,
 } as const;
 
 export const spacing = {
@@ -71,4 +81,22 @@ export const shadows = {
   card: '0 1px 2px rgba(0, 0, 0, 0.05)',
   raised: '0 4px 12px rgba(0, 0, 0, 0.10)',
   overlay: '0 8px 24px rgba(0, 0, 0, 0.18)',
+} as const;
+
+export const layout = {
+  screenPadding: 20,
+  sectionGap: 28,
+  fieldGap: 12,
+} as const;
+
+export const control = {
+  sm: 36,
+  md: 44,
+  lg: 52,
+} as const;
+
+export const motion = {
+  fast: 120,
+  base: 200,
+  slow: 300,
 } as const;

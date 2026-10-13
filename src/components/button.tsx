@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { colors, control, radius, spacing } from '@/theme';
 import { ThemedText } from './themed-text';
 
 type Variant = 'primary' | 'secondary' | 'destructive' | 'ghost';
@@ -14,9 +14,9 @@ const variantStyles = {
 } as const;
 
 const sizeStyles = {
-  sm: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm },
-  md: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
-  lg: { paddingVertical: spacing.md, paddingHorizontal: spacing.lg },
+  sm: { minHeight: control.sm, paddingHorizontal: spacing.md },
+  md: { minHeight: control.md, paddingHorizontal: spacing.lg },
+  lg: { minHeight: control.lg, paddingHorizontal: spacing.lg },
 } as const;
 
 type ButtonProps = {
@@ -54,7 +54,8 @@ export function Button({
           borderCurve: 'continuous',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: disabled ? 0.4 : pressed ? 0.7 : 1,
+          opacity: disabled ? 0.4 : pressed ? 0.75 : 1,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
           ...sizeStyles[size],
         },
         style,
