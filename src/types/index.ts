@@ -40,6 +40,58 @@ export type RegisterResponse = {
   userId: string;
 };
 
+export type Category = {
+  id: string;
+  name: string;
+  description: string;
+  type: CategoryType;
+};
+
+export type Subcategory = {
+  categoryId: string;
+  subcategoryId: string;
+  subcategoryName: string;
+  subcategoryDescription: string;
+};
+
+export type CreateCategoryRequest = {
+  name: string;
+  description?: string;
+  type: CategoryType;
+};
+
+export type EditCategoryRequest = {
+  name?: string;
+  description?: string;
+  type?: CategoryType;
+};
+
+export type CreateSubcategoryRequest = {
+  name: string;
+  description?: string;
+};
+
+export type EditSubcategoryRequest = {
+  name?: string;
+  description?: string;
+};
+
+export type Tag = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+export type CreateTagRequest = {
+  name: string;
+  description?: string;
+};
+
+export type EditTagRequest = {
+  name?: string;
+  description?: string;
+};
+
 export interface TokenStore {
   get(): Promise<string | null>;
   set(token: string): Promise<void>;

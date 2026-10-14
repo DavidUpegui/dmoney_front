@@ -2,36 +2,47 @@
 
 ## Routes (`src/app/...`)
 
-- [ ] `(tabs)/tags.tsx` — list
-- [ ] `tags/new.tsx`, `tags/[id]/edit.tsx` — form modals
+- [x] `(tabs)/tags.tsx` — list
+- [x] `tags/new.tsx`, `tags/[id]/edit.tsx` — form modals
+- [x] `tags/_layout.tsx` — Stack + formSheet presentation
 
 ## Screens (`src/screens/...`)
 
-- [ ] `TagListScreen`
-- [ ] `TagFormScreen`
+- [x] `TagListScreen` (in `(tabs)/tags.tsx`)
+- [x] `TagForm` component (new/edit routes)
 
 ## Components (`src/components/...`)
 
-- [ ] `TagRow`
-- [ ] Reuse `Card`, `Button`, `TextInput`, `EmptyState`, `ErrorState`, `ConfirmDialog`
+- [x] `TagForm`; reuse `ListRow` for rows
+- [x] Reuse `Screen` (grouped, scroll), `FormSection`, `Button`, `TextInput`,
+      `FormBanner`, `EmptyState`, `ErrorState`, `Spinner`, `confirmDestructive`
 
-## Data fetching (`src/hooks/...`, `src/lib/api/...`)
+## UI / design (skills-based, Native restraint)
 
-- [ ] Queries: `useTags`, `useTag`
-- [ ] Mutations: `useCreateTag`, `useEditTag`, `useDeleteTag`
+- [x] Grouped inset section; 20 px screen padding; tokens only
+- [x] Form sheets for create/edit; destructive confirm for delete
+
+## Data fetching (`src/lib/...`)
+
+- [x] Queries: `useTags`, `useTag`
+- [x] Mutations: `useCreateTag`, `useEditTag`, `useDeleteTag`
+- [x] `src/lib/api/tags.ts` typed client
 
 ## Types & constants (`src/types/...`)
 
-- [ ] `Tag` + request types
+- [x] `Tag` + request types
+- [x] Shared `field-validation.ts` (`validateName`, `validateDescription`)
 
 ## Tests (colocated `*.test.ts(x)`)
 
-- [ ] `TagList` four states
-- [ ] Tag form validation
-- [ ] `useCreateTag` / `useEditTag` / `useDeleteTag` mutation + invalidation
+- [x] Tag API client
+- [x] Query + mutation hooks incl. invalidation/removal
+- [x] Field validation
 
 ## Verification
 
-- [ ] `npx tsc --noEmit`
-- [ ] `npx expo lint`
-- [ ] `npm test`
+- [x] `npx tsc --noEmit`
+- [x] `npx expo lint`
+- [x] `npm test`
+- [x] API smoke against the running backend (201/409/200/204/401)
+- [ ] Visual check on mobile + web (screenshots)

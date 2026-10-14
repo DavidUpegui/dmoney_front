@@ -11,6 +11,7 @@ type ListRowProps = {
   destructive?: boolean;
   chevron?: boolean;
   icon?: ReactNode;
+  trailing?: ReactNode;
   onPress?: () => void;
 };
 
@@ -21,6 +22,7 @@ export function ListRow({
   destructive = false,
   chevron = false,
   icon,
+  trailing,
   onPress,
 }: ListRowProps) {
   const content = (
@@ -33,6 +35,7 @@ export function ListRow({
         {subtitle != null ? <ThemedText variant="caption">{subtitle}</ThemedText> : null}
       </View>
       {value != null ? <ThemedText variant="subhead">{value}</ThemedText> : null}
+      {trailing}
       {chevron ? (
         <ThemedText variant="subhead" style={styles.chevron}>
           {'\u203A'}

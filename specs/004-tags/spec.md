@@ -1,6 +1,6 @@
 # Feature: Tags
 
-- **Status:** `draft`
+- **Status:** `implemented`
 - **Folder:** `004-tags`
 - **Related area:** `tracker`
 
@@ -61,22 +61,27 @@ Actors: the authenticated user.
 ```
 src/app/
   (tabs)/
-    tags.tsx             # /tags — list
+    tags.tsx             # /tags — list (tab)
   tags/
-    new.tsx              # /tags/new — create (modal)
-    [id]/edit.tsx        # /tags/[id]/edit — edit (modal)
+    _layout.tsx          # Stack: header + form-sheet presentation
+    new.tsx              # /tags/new — create (formSheet)
+    [id]/edit.tsx        # /tags/[id]/edit — edit (formSheet) + delete
 ```
 
-- Create/edit present as modal sheets on the tags tab's stack.
+- The list is the `(tabs)` route `/tags`; the `tags/` stack is a sibling of the
+  tabs (pushed over them) and is guarded by the root auth gate.
+- Create/edit present as modal sheets via `presentation: 'formSheet'`; delete
+  lives on the edit sheet behind a confirmation.
 
 ## 4. Screens & UI
 
 | Screen | Route | States & affordances |
 |--------|-------|----------------------|
-| `TagList` | `/tags` | loading → spinner; empty → "Sin etiquetas" + Create; error → retry; content → list |
-| `TagForm` | `/tags/new`, `/tags/[id]/edit` | inline validation; save disabled while pending |
+| `TagList` | `/tags` | loading → spinner; empty → "No tags yet" + Create; error → retry; content → inset section of `ListRow`s (name + description) |
+| `TagForm` | `/tags/new`, `/tags/[id]/edit` | inset form (Name, Description); inline validation; submit disabled while pending; destructive Delete on edit |
 
-Reusable: `Card`, `Button`, `TextInput`, `EmptyState`, `ErrorState`, `Spinner`.
+Reusable: `Screen` (grouped), `FormSection`, `ListRow`, `Button`, `TextInput`,
+`FormBanner`, `EmptyState`, `ErrorState`, `Spinner`.
 
 ## 5. Data Fetching & API
 

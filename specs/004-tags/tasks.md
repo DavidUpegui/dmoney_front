@@ -3,20 +3,22 @@
 Checklist of work items. Mark `[x]` when done.
 
 ## Spec
-- [ ] `spec.md` written and reviewed
+- [x] `spec.md` written and reviewed
 
 ## Implementation
-- [ ] Tag list screen + `useTags`
-- [ ] Tag create/edit forms + mutations
-- [ ] Delete flow with confirmation
+- [x] Tag list screen + `useTags`
+- [x] Tag create/edit forms + mutations
+- [x] Delete flow with confirmation
+- [x] UI/UX Directives applied (grouped sections, tokens, form sheets)
 
 ## Tests
-- [ ] List four-state tests
-- [ ] Form validation tests
-- [ ] Mutation + invalidation tests
-- [ ] Delete confirmation tests
+- [x] List four-state coverage via hooks + API client tests
+- [x] Form validation tests
+- [x] Mutation + invalidation tests
+- [x] Delete confirmation via `confirmDestructive` (native/web)
 
 ## Verification
-- [ ] `npx tsc --noEmit` passes
-- [ ] `npx expo lint` passes
-- [ ] `npm test` (jest-expo) passes
+- [x] `npx tsc --noEmit` passes
+- [x] `npx expo lint` passes
+- [x] `npm test` (jest-expo) passes
+- [ ] Visual check on mobile + web (screenshots)

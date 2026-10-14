@@ -1,6 +1,6 @@
 # Feature: Categories & Subcategories
 
-- **Status:** `draft`
+- **Status:** `implemented`
 - **Folder:** `003-categories`
 - **Related area:** `tracker`
 
@@ -75,29 +75,35 @@ Actors: the authenticated user, managing their own category taxonomy.
 ```
 src/app/
   (tabs)/
-    categories.tsx                    # /categories — list
+    categories.tsx                    # /categories — list (tab)
   categories/
-    [id].tsx                          # /categories/[id] — subcategory list
-    new.tsx                           # /categories/new — create (modal)
-    [id]/edit.tsx                     # /categories/[id]/edit — edit (modal)
-    [id]/subcategories/new.tsx        # new subcategory (modal)
-    [id]/subcategories/[subcategoryId]/edit.tsx  # edit subcategory (modal)
+    _layout.tsx                       # Stack: header + form-sheet presentation
+    new.tsx                           # /categories/new — create (formSheet)
+    [id]/
+      index.tsx                       # /categories/[id] — detail + subcategories
+      edit.tsx                        # /categories/[id]/edit — edit (formSheet)
+      subcategories/
+        new.tsx                       # new subcategory (formSheet)
+        [subcategoryId]/
+          edit.tsx                    # edit subcategory (formSheet)
 ```
 
-- Create/edit forms present as modal sheets (native `formSheet`).
-- Categories live inside the `(tabs)` group; `categories/` sub-routes are
-  pushed onto the tab's stack.
+- The list is the `(tabs)` route `/categories`; the `categories/` stack is a
+  sibling of the tabs (pushed over them) and is guarded by the root auth gate.
+- Create/edit present as modal sheets via `presentation: 'formSheet'`.
 
 ## 4. Screens & UI
 
 | Screen | Route | States & affordances |
 |--------|-------|----------------------|
-| `CategoryList` | `/categories` | loading → spinner; empty → "Sin categorías" + Create; error → retry; content → list grouped by type |
-| `CategoryDetail` | `/categories/[id]` | loading/error/empty/content for subcategories; add/edit/delete actions |
-| `CategoryForm` | `/categories/new`, `[id]/edit` | inline validation; save disabled while pending |
-| `SubcategoryForm` | subcategory create/edit | inline validation; save disabled while pending |
+| `CategoryList` | `/categories` | loading → spinner; empty → "No categories yet" + Create; error → retry; content → inset sections grouped by Income/Outcome with `TypeBadge` rows |
+| `CategoryDetail` | `/categories/[id]` | loading/error for the category; subcategories in an inset section with loading/error/empty/content; Edit/Delete + Add subcategory actions |
+| `CategoryForm` | `/categories/new`, `[id]/edit` | inset form (Name, Type segmented control, Description); inline validation; submit disabled while pending |
+| `SubcategoryForm` | subcategory create/edit | inset form (Name, Description); inline validation; submit disabled while pending; destructive Delete on edit |
 
-Reusable: `Card`, `Button`, `TextInput`, `EmptyState`, `ErrorState`, `Spinner`.
+Reusable: `Screen` (grouped), `FormSection`, `ListRow`, `Button`, `TextInput`,
+`SegmentedControl`, `TypeBadge`, `FormBanner`, `EmptyState`, `ErrorState`,
+`Spinner`.
 
 ## 5. Data Fetching & API
 
@@ -177,7 +183,7 @@ type EditSubcategoryRequest = { name?: string; description?: string };
 ## 8. Edge Cases
 
 - Empty category list → empty state with Create action.
-- Category with no subcategories → "Sin subcategorías" empty state.
+- Category with no subcategories → "No subcategories yet" empty state.
 - Delete a category that has movements (backend may still allow; if it 404s
   after, treat as gone and refresh).
 - Duplicate name → `409` inline.

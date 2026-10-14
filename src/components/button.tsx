@@ -25,6 +25,7 @@ type ButtonProps = {
   size?: Size;
   loading?: boolean;
   disabled?: boolean;
+  accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
   onPress?: () => void;
 };
@@ -35,6 +36,7 @@ export function Button({
   size = 'md',
   loading,
   disabled,
+  accessibilityLabel,
   style,
   onPress,
 }: ButtonProps) {
@@ -43,7 +45,7 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={title}
+      accessibilityLabel={accessibilityLabel ?? title}
       accessibilityState={{ disabled: !!(disabled || loading), busy: !!loading }}
       disabled={disabled || loading}
       onPress={onPress}

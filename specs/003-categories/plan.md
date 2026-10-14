@@ -2,44 +2,54 @@
 
 ## Routes (`src/app/...`)
 
-- [ ] `(tabs)/categories.tsx` — list
-- [ ] `categories/[id].tsx` — subcategory list/detail
-- [ ] `categories/new.tsx`, `categories/[id]/edit.tsx` — category form modals
-- [ ] `categories/[id]/subcategories/new.tsx`, `categories/[id]/subcategories/[subcategoryId]/edit.tsx`
+- [x] `(tabs)/categories.tsx` — list
+- [x] `categories/[id]/index.tsx` — subcategory list/detail
+- [x] `categories/new.tsx`, `categories/[id]/edit.tsx` — category form modals
+- [x] `categories/[id]/subcategories/new.tsx`, `categories/[id]/subcategories/[subcategoryId]/edit.tsx`
+- [x] `categories/_layout.tsx` — Stack + formSheet presentation
 
 ## Screens (`src/screens/...`)
 
-- [ ] `CategoryListScreen`
-- [ ] `CategoryDetailScreen` (subcategories)
-- [ ] `CategoryFormScreen`
-- [ ] `SubcategoryFormScreen`
+- [x] `CategoryListScreen` (in `(tabs)/categories.tsx`)
+- [x] `CategoryDetailScreen` (subcategories)
+- [x] `CategoryForm` component (new/edit routes)
+- [x] `SubcategoryForm` component (new/edit routes)
 
 ## Components (`src/components/...`)
 
-- [ ] `CategoryRow`, `TypeBadge`, `SubcategoryRow`
-- [ ] `ConfirmDialog` (delete confirmation)
-- [ ] Reuse `Card`, `Button`, `TextInput`, `EmptyState`, `ErrorState`
+- [x] `TypeBadge`, `SegmentedControl`; `ListRow` gained a `trailing` slot
+- [x] `confirmDestructive` (native alert / web confirm)
+- [x] Reuse `Screen` (grouped, scroll), `FormSection`, `ListRow`, `Button`,
+      `TextInput`, `FormBanner`, `EmptyState`, `ErrorState`, `Spinner`
 
-## Data fetching (`src/hooks/...`, `src/lib/api/...`)
+## UI / design (skills-based, Native restraint)
 
-- [ ] Queries: `useCategories`, `useCategory`, `useSubcategories`
-- [ ] Mutations: `useCreateCategory`, `useEditCategory`, `useDeleteCategory`,
+- [x] Grouped inset sections; 20 px screen padding; tokens only
+- [x] `TypeBadge` (income/outcome tokens); segmented Type control
+- [x] Form sheets for create/edit; destructive confirm for deletes
+
+## Data fetching (`src/lib/...`)
+
+- [x] Queries: `useCategories`, `useCategory`, `useSubcategories`
+- [x] Mutations: `useCreateCategory`, `useEditCategory`, `useDeleteCategory`,
   `useCreateSubcategory`, `useEditSubcategory`, `useDeleteSubcategory`
+- [x] `src/lib/api/categories.ts` typed client
 
 ## Types & constants (`src/types/...`)
 
-- [ ] `Category`, `Subcategory` + request types
+- [x] `Category`, `Subcategory` + request types
+- [x] `category-validation.ts`
 
 ## Tests (colocated `*.test.ts(x)`)
 
-- [ ] `CategoryList` four states
-- [ ] Category form validation
-- [ ] `useCreateCategory` / `useEditCategory` mutation + invalidation
-- [ ] `useDeleteCategory` (confirm → invalidate)
-- [ ] Subcategory CRUD hooks
+- [x] Category/subcategory API client
+- [x] Query + mutation hooks incl. invalidation/removal
+- [x] Form validation
 
 ## Verification
 
-- [ ] `npx tsc --noEmit`
-- [ ] `npx expo lint`
-- [ ] `npm test`
+- [x] `npx tsc --noEmit`
+- [x] `npx expo lint`
+- [x] `npm test`
+- [x] API smoke against the running backend (201/409/200/204/401)
+- [ ] Visual check on mobile + web (screenshots)
