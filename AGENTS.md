@@ -16,6 +16,8 @@
 
 - **Remote**: `git@github.com:DavidUpegui/dmoney_front.git` (SSH)
 - **Branching**: Trunk-based development; default branch is `trunk`.
+- **Git workflow**: `../dmoney_platform/docs/technical/git-workflow.md` —
+  branch names, commit format, PR rules and merge strategy.
 
 ## Expo Skills
 
