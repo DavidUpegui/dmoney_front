@@ -1,26 +1,48 @@
 import { type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { colors, layout, radius, spacing } from '@/theme';
+import { useColors } from '@/lib/theme';
+import { layout, radius, spacing } from '@/theme';
 import { ThemedText } from './themed-text';
 
 type FormSectionProps = {
   title?: string;
+  headerTrailing?: ReactNode;
   footer?: string;
   children: ReactNode;
 };
 
-export function FormSection({ title, footer, children }: FormSectionProps) {
+/**
+ * Padded card for form fields. For lists of rows use ListGroup.
+ */
+export function FormSection({ title, headerTrailing, footer, children }: FormSectionProps) {
+  const colors = useColors();
+  const showHeader = title != null || headerTrailing != null;
+
   return (
     <View style={styles.wrapper}>
-      {title != null ? (
-        <ThemedText variant="caption" style={styles.header}>
-          {title}
-        </ThemedText>
+      {showHeader ? (
+        <View style={styles.header}>
+          {title != null ? (
+            <ThemedText variant="label" tone="secondary">
+              {title}
+            </ThemedText>
+          ) : (
+            <View />
+          )}
+          {headerTrailing}
+        </View>
       ) : null}
-      <View style={styles.section}>{children}</View>
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.surface, borderColor: colors.hairline },
+        ]}
+      >
+        {children}
+      </View>
       {footer != null ? (
-        <ThemedText variant="caption" style={styles.footer}>
+        <ThemedText variant="caption" tone="faint" style={styles.footer}>
           {footer}
         </ThemedText>
       ) : null}
@@ -33,13 +55,17 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   header: {
-    marginLeft: spacing.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.xs,
   },
   section: {
-    backgroundColor: colors.groupedCell,
-    borderRadius: radius.lg,
+    borderRadius: radius.xl,
     borderCurve: 'continuous',
-    padding: layout.fieldGap,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: layout.cardPadding,
     gap: layout.fieldGap,
   },
   footer: {

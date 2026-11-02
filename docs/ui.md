@@ -4,9 +4,10 @@ Read this before any UI change. Use these tokens and rules. If a case is not
 covered, stop and add it here; never invent a value or a component.
 
 - Behaviour lives in `specs/`. This file is visual only.
-- This file is the source of truth for values. `src/theme.ts` migrates to it in
-  the component pass; until then the app still carries the previous palette.
-- Status: **decided** (probe v2, 2026-11-01). See “Decision log”.
+- This file is the source of truth for values. `src/theme.ts` implements them;
+  `src/app/dev/ui.tsx` is the living specimen. Update all three together.
+- Status: **tokens, fonts and primitives implemented** (2026-11-02). Screens
+  still migrate one by one. See “Decision log”.
 
 ## Principles
 
@@ -14,6 +15,14 @@ covered, stop and add it here; never invent a value or a component.
 - One accent per screen. Semantic color only for money and type.
 - Native first: no decoration that does not communicate.
 - Warm, not clinical. Stone in light, charcoal in dark, petrol as the accent.
+
+## Where it lives
+
+- `src/theme.ts` — colors, families, type scale, spacing, radius, shadows,
+  layout and controls. Tokens only; no screen values.
+- `src/app/_layout.tsx` — loads Manrope and Plus Jakarta with `expo-font`.
+- `src/components/icon.tsx` — the only icon entry point.
+- `src/app/dev/ui.tsx` — the gallery. Dev only; Settings → Development → UI kit.
 
 ## Color
 
@@ -58,7 +67,8 @@ Two families, never a third:
 - **Text: Manrope.** Everything else, including row amounts. Weights
   400 / 500 / 600 / 700.
 
-Load with `expo-font`. Amounts use `fontVariant: ['tabular-nums']`.
+Loaded in `src/app/_layout.tsx` with `expo-font`. Amounts use
+`fontVariant: ['tabular-nums']`.
 
 | Token | Size / line | Weight | Family | Use |
 |---|---|---|---|---|
@@ -69,9 +79,14 @@ Load with `expo-font`. Amounts use `fontVariant: ['tabular-nums']`.
 | `subhead` | 14 / 20 | 500 | Text | Secondary copy, search |
 | `caption` | 12 / 17 | 500 | Text | Meta, helper text, tags |
 | `label` | 12 / 16 | 700 | Text | Uppercase labels, tracking 0.06em |
-| `amount` | 15 / 20 | 700 | Text | Row amounts, tabular |
-| `amountLarge` | 30 / 36 | 800 | Display | Summary total, tabular |
-| `amountHero` | 38 / 46 | 800 | Display | Form amount, tabular |
+| `button` | 15 / 20 | 700 | Text | Button label |
+| `buttonSmall` | 13 / 16 | 700 | Text | Header action, day net |
+| `chip` | 12 / 16 | 600 | Text | Chips and segments |
+| `numeric` | 15 / 20 | 700 | Text | Row amounts, tabular |
+| `numericSmall` | 12 / 16 | 700 | Text | Day net, badges, tabular |
+| `numericLarge` | 30 / 36 | 800 | Display | Summary total, tabular |
+| `numericHero` | 38 / 46 | 800 | Display | Form amount, tabular |
+| `amountSymbol` | 22 / 28 | 700 | Display | Currency symbol |
 
 Rules: at most three sizes per screen; hierarchy comes from weight and color,
 not from more sizes. Never go below 12, except the platform tab bar.
@@ -92,10 +107,9 @@ not from more sizes. Never go below 12, except the platform tab bar.
   10 vertical / 12 horizontal. Min row height 56.
 - Radius: `xs` 6 (row tags), `sm` 8 (form tags), `md` 10 (small tile),
   `lg` 12 (inputs, buttons, tiles), `xl` 16 (groups, sheets), `full` 9999.
-- Elevation: groups and rows **none**. Selected segment and pressed surfaces
-  use `0 1px 2px rgba(27,42,38,0.06)` light / `rgba(0,0,0,0.4)` dark.
-  Overlays use `0 12px 32px rgba(27,42,38,0.16)` light / `rgba(0,0,0,0.55)`
-  dark.
+- Elevation: groups and rows **none**. Selected segments use `shadows.card`
+  (`0 1px 2px rgba(0,0,0,0.06)`). Overlays use `shadows.overlay`
+  (`0 12px 32px rgba(0,0,0,0.22)`).
 - Primary buttons may use a soft glow: `0 4px 14px` primary at 28%. Nothing
   else glows.
 - 1 px `hairline` border. No card inside a card.
@@ -176,7 +190,8 @@ not from more sizes. Never go below 12, except the platform tab bar.
 ### Tabs
 - Four: Movements, Categories, Tags, Settings. Native tab bar.
 - Active `primary`; inactive `inkFaint`. No badges unless count.
-- The native bar controls its own label metrics. Do not restyle it beyond tint.
+- Native labels 11/16 500, 600 selected; do not change the bar height or icons
+  beyond tint. Web tabs use 11/16 600.
 
 ### Sheet
 - Native form sheet; native grabber. Title `title` in Display.
@@ -184,6 +199,12 @@ not from more sizes. Never go below 12, except the platform tab bar.
 - Cancel 36 high with 44 hit area, in the header or as a secondary action.
 - Action bar `surface` with a 1 px top `hairline`. Keyboard-safe scroll.
 - No custom blurred header inside the sheet.
+
+### Icon
+- Lucide outline, 2 px stroke, sizes 16 / 18 / 20 / 24 / 40.
+- Import through `src/components/icon.tsx` only; never import a set in a screen.
+- Categories and subcategories use the `tag` glyph in `inkFaint` until the back
+  supports `icon` / `color`. No per-category color before that.
 
 ## Composition
 

@@ -1,7 +1,9 @@
 import { type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { colors, control, spacing } from '@/theme';
+import { useColors } from '@/lib/theme';
+import { layout, radius, spacing } from '@/theme';
+import { Icon } from './icon';
 import { ThemedText } from './themed-text';
 
 type ListRowProps = {
@@ -10,6 +12,7 @@ type ListRowProps = {
   value?: string;
   destructive?: boolean;
   chevron?: boolean;
+  divider?: boolean;
   icon?: ReactNode;
   trailing?: ReactNode;
   onPress?: () => void;
@@ -21,31 +24,46 @@ export function ListRow({
   value,
   destructive = false,
   chevron = false,
+  divider = false,
   icon,
   trailing,
   onPress,
 }: ListRowProps) {
+  const colors = useColors();
+
   const content = (
     <View style={styles.content}>
-      {icon != null ? <View style={styles.icon}>{icon}</View> : null}
+      {icon != null ? (
+        <View style={[styles.iconTile, { backgroundColor: colors.sunken }]}>{icon}</View>
+      ) : null}
       <View style={styles.text}>
-        <ThemedText variant="body" style={destructive ? styles.destructive : undefined}>
+        <ThemedText variant="rowTitle" tone={destructive ? 'danger' : 'default'}>
           {title}
         </ThemedText>
-        {subtitle != null ? <ThemedText variant="caption">{subtitle}</ThemedText> : null}
+        {subtitle != null ? (
+          <ThemedText variant="caption" tone="secondary" numberOfLines={1}>
+            {subtitle}
+          </ThemedText>
+        ) : null}
       </View>
-      {value != null ? <ThemedText variant="subhead">{value}</ThemedText> : null}
-      {trailing}
-      {chevron ? (
-        <ThemedText variant="subhead" style={styles.chevron}>
-          {'\u203A'}
+      {value != null ? (
+        <ThemedText variant="numeric" tone="secondary">
+          {value}
         </ThemedText>
       ) : null}
+      {trailing}
+      {chevron ? <Icon name="chevron" size={16} tone="faint" /> : null}
     </View>
   );
 
+  const rowStyle = [
+    styles.row,
+    divider && styles.divider,
+    { borderTopColor: colors.hairline },
+  ];
+
   if (onPress == null) {
-    return <View style={styles.row}>{content}</View>;
+    return <View style={rowStyle}>{content}</View>;
   }
 
   return (
@@ -53,7 +71,7 @@ export function ListRow({
       accessibilityRole="button"
       accessibilityLabel={title}
       onPress={onPress}
-      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+      style={({ pressed }) => [rowStyle, pressed && styles.pressed]}
     >
       {content}
     </Pressable>
@@ -62,28 +80,30 @@ export function ListRow({
 
 const styles = StyleSheet.create({
   row: {
-    minHeight: control.md,
+    minHeight: layout.rowMinHeight,
     justifyContent: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: layout.rowPaddingV,
+    paddingHorizontal: layout.rowPaddingH,
+  },
+  divider: {
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.sm + 2,
   },
-  icon: {
-    width: 28,
+  iconTile: {
+    width: 36,
+    height: 36,
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.md,
+    borderCurve: 'continuous',
   },
   text: {
     flex: 1,
-    gap: spacing.xs,
-  },
-  destructive: {
-    color: colors.danger,
-  },
-  chevron: {
-    color: colors.textSecondary,
+    gap: 1,
   },
   pressed: {
     opacity: 0.6,

@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { useColors } from '@/lib/theme';
+import { radius, spacing } from '@/theme';
 import { ThemedText } from './themed-text';
 
 type BrandMarkProps = {
@@ -8,16 +9,18 @@ type BrandMarkProps = {
 };
 
 export function BrandMark({ subtitle }: BrandMarkProps) {
+  const colors = useColors();
+
   return (
     <View style={styles.wrapper}>
-      <View style={styles.badge}>
-        <ThemedText variant="title" style={styles.badgeText}>
+      <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+        <ThemedText variant="title" tone="onPrimary">
           d
         </ThemedText>
       </View>
       <ThemedText variant="largeTitle">dmoney</ThemedText>
       {subtitle != null ? (
-        <ThemedText variant="subhead" style={styles.subtitle}>
+        <ThemedText variant="subhead" tone="secondary" style={styles.subtitle}>
           {subtitle}
         </ThemedText>
       ) : null}
@@ -31,17 +34,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   badge: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.full,
+    width: 60,
+    height: 60,
+    borderRadius: radius.lg,
     borderCurve: 'continuous',
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.sm,
-  },
-  badgeText: {
-    color: colors.onPrimary,
   },
   subtitle: {
     textAlign: 'center',

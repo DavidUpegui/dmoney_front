@@ -13,7 +13,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <View style={styles.container}>
       <ThemedText variant="headline">Something went wrong</ThemedText>
-      <ThemedText variant="body" selectable style={styles.message}>
+      <ThemedText variant="body" tone="secondary" selectable style={styles.message}>
         {message}
       </ThemedText>
       {onRetry != null && <Button title="Retry" variant="secondary" onPress={onRetry} />}
@@ -27,9 +27,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.md,
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   message: {
     textAlign: 'center',
+    maxWidth: 320,
   },
 });

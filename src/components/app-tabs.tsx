@@ -1,8 +1,21 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/native-tabs';
+
+import { useColors } from '@/lib/theme';
 
 export default function AppTabs() {
+  const colors = useColors();
+
   return (
-    <NativeTabs>
+    <NativeTabs
+      iconColor={{ default: colors.inkFaint, selected: colors.primary }}
+      labelStyle={{
+        default: { color: colors.inkFaint, fontSize: 11, fontWeight: '500' },
+        selected: { color: colors.primary, fontSize: 11, fontWeight: '600' },
+      }}
+      backgroundColor={colors.surface}
+      shadowColor={colors.hairline}
+      disableTransparentOnScrollEdge
+    >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Movements</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="list.bullet" md="list" />
