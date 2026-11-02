@@ -92,6 +92,39 @@ export type EditTagRequest = {
   description?: string;
 };
 
+export type Movement = {
+  movementId: string;
+  categoryId: string;
+  subcategoryId: string;
+  amount: number;
+  type: MovementType;
+  description: string;
+  date: string;
+  tagIds: string[];
+};
+
+export type CreateMovementRequest = {
+  categoryId: string;
+  subcategoryId: string;
+  amount: number;
+  type: MovementType;
+  description?: string;
+  date: string;
+  tagIds?: string[];
+};
+
+export type EditMovementRequest = Partial<CreateMovementRequest>;
+
+export type MovementFilters = {
+  categoryIds?: string[];
+  subcategoryIds?: string[];
+  tagIds?: string[];
+  type?: MovementType;
+  dateFrom?: string;
+  dateTo?: string;
+  search?: string;
+};
+
 export interface TokenStore {
   get(): Promise<string | null>;
   set(token: string): Promise<void>;
