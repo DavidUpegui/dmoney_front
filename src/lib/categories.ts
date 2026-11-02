@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import * as categoriesApi from '@/lib/api/categories';
 import type {
@@ -34,6 +34,16 @@ export function useSubcategories(categoryId: string) {
   });
 }
 
+export function useAllSubcategories(categoryIds: string[]) {
+  return useQueries({
+    queries: categoryIds.map((categoryId) => ({
+      queryKey: categoryKeys.subcategories(categoryId),
+      queryFn: () => categoriesApi.listSubcategories(categoryId),
+      enabled: categoryId.length > 0,
+    })),
+  });
+}
+
 export function useCreateCategory() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -49,8 +59,9 @@ export function useEditCategory() {
   return useMutation({
     mutationFn: ({ id, body }: { id: string; body: EditCategoryRequest }) =>
       categoriesApi.editCategory(id, body),
-    onSuccess: () => {
+    onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: categoryKeys.all });
+      void queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) });
     },
   });
 }

@@ -1,14 +1,14 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { Button } from '@/components/button';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
-import { FormSection } from '@/components/form-section';
+import { Header, HeaderAction } from '@/components/header';
+import { Icon } from '@/components/icon';
+import { ListGroup } from '@/components/list-group';
 import { ListRow } from '@/components/list-row';
 import { Screen } from '@/components/screen';
 import { Spinner } from '@/components/spinner';
-import { ThemedText } from '@/components/themed-text';
 import { TypeBadge } from '@/components/type-badge';
 import { useCategories } from '@/lib/categories';
 import { layout, spacing } from '@/theme';
@@ -20,19 +20,21 @@ export default function CategoriesScreen() {
   const categories = useCategories();
 
   return (
-    <Screen grouped>
+    <Screen
+      header={
+        <Header
+          title="Categories"
+          action={
+            <HeaderAction
+              label="Add"
+              accessibilityLabel="New category"
+              onPress={() => push('/categories/new')}
+            />
+          }
+        />
+      }
+    >
       <View style={styles.container}>
-        <View style={styles.header}>
-          <ThemedText variant="largeTitle">Categories</ThemedText>
-          <Button
-            title="+"
-            accessibilityLabel="New category"
-            variant="secondary"
-            size="sm"
-            onPress={() => push('/categories/new')}
-          />
-        </View>
-
         {categories.isLoading ? (
           <View style={styles.center}>
             <Spinner />
@@ -79,18 +81,20 @@ function CategoryGroup({ title, categories, onSelect }: CategoryGroupProps) {
   }
 
   return (
-    <FormSection title={title}>
-      {categories.map((category) => (
+    <ListGroup title={title}>
+      {categories.map((category, index) => (
         <ListRow
           key={category.id}
           title={category.name}
           subtitle={category.description.length > 0 ? category.description : undefined}
+          icon={<Icon name="tag" size={18} tone="faint" />}
           trailing={<TypeBadge type={category.type} />}
+          divider={index > 0}
           chevron
           onPress={() => onSelect(category.id)}
         />
       ))}
-    </FormSection>
+    </ListGroup>
   );
 }
 
@@ -99,12 +103,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: spacing.lg,
     gap: layout.sectionGap,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
   },
   list: {
     gap: layout.sectionGap,

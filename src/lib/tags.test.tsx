@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
 import * as tagsApi from './api/tags';
-import { useCreateTag, useDeleteTag, useTags } from './tags';
+import { useCreateTag, useDeleteTag, useEditTag, useTags, useTag } from './tags';
 
 jest.mock('./api/tags');
 
@@ -34,7 +34,7 @@ afterEach(() => {
 });
 
 describe('useTags', () => {
-  it('loads the tag list', async () => {
+  it('ftag01_loads_the_tag_list', async () => {
     mockedApi.listTags.mockResolvedValue([tag]);
 
     const { result } = await renderHook(() => useTags(), { wrapper: createWrapper() });
@@ -44,8 +44,20 @@ describe('useTags', () => {
   });
 });
 
+describe('useTag', () => {
+  it('ftag06_loads_a_single_tag', async () => {
+    mockedApi.getTag.mockResolvedValue(tag);
+
+    const { result } = await renderHook(() => useTag('1'), { wrapper: createWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockedApi.getTag).toHaveBeenCalledWith('1');
+    expect(result.current.data).toEqual(tag);
+  });
+});
+
 describe('useCreateTag', () => {
-  it('creates a tag and invalidates the list', async () => {
+  it('ftag05_creates_and_invalidates', async () => {
     const invalidate = jest.spyOn(queryClient, 'invalidateQueries');
     mockedApi.createTag.mockResolvedValue(tag);
 
@@ -62,8 +74,27 @@ describe('useCreateTag', () => {
   });
 });
 
+describe('useEditTag', () => {
+  it('ftag07_edits_and_invalidates_list_and_detail', async () => {
+    const invalidate = jest.spyOn(queryClient, 'invalidateQueries');
+    mockedApi.editTag.mockResolvedValue({ ...tag, name: 'trips' });
+
+    const { result } = await renderHook(() => useEditTag(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: '1', body: { name: 'trips' } });
+    });
+
+    expect(mockedApi.editTag).toHaveBeenCalledWith('1', { name: 'trips' });
+    await waitFor(() =>
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: ['tags'] }),
+    );
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['tags', '1'] });
+  });
+});
+
 describe('useDeleteTag', () => {
-  it('removes the detail query and invalidates the list', async () => {
+  it('ftag08_removes_and_invalidates', async () => {
     const invalidate = jest.spyOn(queryClient, 'invalidateQueries');
     const remove = jest.spyOn(queryClient, 'removeQueries');
     mockedApi.deleteTag.mockResolvedValue(undefined);

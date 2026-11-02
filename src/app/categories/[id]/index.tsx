@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
 import { ErrorState } from '@/components/error-state';
+import { FormBanner } from '@/components/form-banner';
 import { FormSection } from '@/components/form-section';
 import { ListRow } from '@/components/list-row';
 import { Screen } from '@/components/screen';
@@ -33,7 +34,7 @@ export default function CategoryDetailScreen() {
   const ready = !category.isLoading && category.data != null;
 
   return (
-    <Screen grouped scroll={ready}>
+    <Screen scroll={ready}>
       <Stack.Screen options={{ title: category.data?.name ?? 'Category' }} />
 
       {category.isLoading ? (
@@ -54,6 +55,14 @@ export default function CategoryDetailScreen() {
               trailing={<TypeBadge type={category.data.type} />}
             />
           </FormSection>
+
+          {removeCategory.error != null ? (
+            <FormBanner
+              message={errorMessage(removeCategory.error, {
+                409: 'This category still has movements',
+              })}
+            />
+          ) : null}
 
           <View style={styles.actions}>
             <Button
@@ -89,7 +98,7 @@ export default function CategoryDetailScreen() {
             ) : subcategoryList.length === 0 ? (
               <ThemedText variant="subhead">No subcategories yet</ThemedText>
             ) : (
-              subcategoryList.map((item) => (
+              subcategoryList.map((item, index) => (
                 <ListRow
                   key={item.subcategoryId}
                   title={item.subcategoryName}
@@ -98,6 +107,7 @@ export default function CategoryDetailScreen() {
                       ? item.subcategoryDescription
                       : undefined
                   }
+                  divider={index > 0}
                   chevron
                   onPress={() =>
                     push(`/categories/${id}/subcategories/${item.subcategoryId}/edit`)

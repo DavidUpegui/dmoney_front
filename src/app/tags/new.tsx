@@ -21,7 +21,7 @@ export default function NewTagScreen() {
           sheetGrabberVisible: true,
         }}
       />
-      <Screen grouped scroll>
+      <Screen scroll>
         <View style={styles.container}>
           <TagForm
             submitLabel="Create"

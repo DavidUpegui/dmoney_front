@@ -31,7 +31,7 @@ describe('api client', () => {
     fetchMock.mockReset();
   });
 
-  it('attaches a bearer token when present', async () => {
+  it('ffound02_attaches_the_bearer_token', async () => {
     mockedTokenStore.get.mockResolvedValue('token-123');
     fetchMock.mockResolvedValue(jsonResponse(200, { ok: true }));
 
@@ -42,7 +42,7 @@ describe('api client', () => {
     expect(new Headers(init.headers).get('Authorization')).toBe('Bearer token-123');
   });
 
-  it('sends no Authorization header without a token', async () => {
+  it('ffound02_sends_no_header_without_token', async () => {
     mockedTokenStore.get.mockResolvedValue(null);
     fetchMock.mockResolvedValue(jsonResponse(200, { ok: true }));
 
@@ -52,7 +52,7 @@ describe('api client', () => {
     expect(new Headers(init.headers).has('Authorization')).toBe(false);
   });
 
-  it('throws a typed ApiError for a non-2xx response', async () => {
+  it('ffound02_maps_non_2xx_to_api_error', async () => {
     mockedTokenStore.get.mockResolvedValue(null);
     fetchMock.mockResolvedValue(
       jsonResponse(404, {
@@ -70,14 +70,14 @@ describe('api client', () => {
     });
   });
 
-  it('throws a network ApiError when fetch rejects', async () => {
+  it('ffound02_maps_network_failures', async () => {
     mockedTokenStore.get.mockResolvedValue(null);
     fetchMock.mockRejectedValue(new Error('offline'));
 
     await expect(api.get('/api/categories')).rejects.toMatchObject({ status: 0 });
   });
 
-  it('resolves to undefined for a 204 response', async () => {
+  it('ffound02_handles_204', async () => {
     mockedTokenStore.get.mockResolvedValue(null);
     fetchMock.mockResolvedValue(jsonResponse(204, null));
 
@@ -95,7 +95,7 @@ describe('api client 401 handling', () => {
     setUnauthorizedHandler(null);
   });
 
-  it('invokes the global handler on 401 for a protected path', async () => {
+  it('fsys02_invokes_the_global_handler_on_401', async () => {
     mockedTokenStore.get.mockResolvedValue('token-123');
     const handler = jest.fn();
     setUnauthorizedHandler(handler);
@@ -108,7 +108,7 @@ describe('api client 401 handling', () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
-  it('does not invoke the global handler for /auth endpoints', async () => {
+  it('fsys02_ignores_auth_endpoints', async () => {
     mockedTokenStore.get.mockResolvedValue(null);
     const handler = jest.fn();
     setUnauthorizedHandler(handler);

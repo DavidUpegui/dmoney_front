@@ -25,7 +25,7 @@ export default function EditCategoryScreen() {
           sheetGrabberVisible: true,
         }}
       />
-      <Screen grouped scroll>
+      <Screen scroll>
         <View style={styles.container}>
           {category.isLoading ? (
             <Spinner />

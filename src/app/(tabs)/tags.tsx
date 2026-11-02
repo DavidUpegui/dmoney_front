@@ -1,14 +1,14 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { Button } from '@/components/button';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
-import { FormSection } from '@/components/form-section';
+import { Header, HeaderAction } from '@/components/header';
+import { Icon } from '@/components/icon';
+import { ListGroup } from '@/components/list-group';
 import { ListRow } from '@/components/list-row';
 import { Screen } from '@/components/screen';
 import { Spinner } from '@/components/spinner';
-import { ThemedText } from '@/components/themed-text';
 import { useTags } from '@/lib/tags';
 import { layout, spacing } from '@/theme';
 import { errorMessage } from '@/utils/error-message';
@@ -18,19 +18,21 @@ export default function TagsScreen() {
   const tags = useTags();
 
   return (
-    <Screen grouped>
+    <Screen
+      header={
+        <Header
+          title="Tags"
+          action={
+            <HeaderAction
+              label="Add"
+              accessibilityLabel="New tag"
+              onPress={() => push('/tags/new')}
+            />
+          }
+        />
+      }
+    >
       <View style={styles.container}>
-        <View style={styles.header}>
-          <ThemedText variant="largeTitle">Tags</ThemedText>
-          <Button
-            title="+"
-            accessibilityLabel="New tag"
-            variant="secondary"
-            size="sm"
-            onPress={() => push('/tags/new')}
-          />
-        </View>
-
         {tags.isLoading ? (
           <View style={styles.center}>
             <Spinner />
@@ -44,17 +46,19 @@ export default function TagsScreen() {
             onAction={() => push('/tags/new')}
           />
         ) : (
-          <FormSection>
-            {(tags.data ?? []).map((tag) => (
+          <ListGroup>
+            {(tags.data ?? []).map((tag, index) => (
               <ListRow
                 key={tag.id}
                 title={tag.name}
                 subtitle={tag.description.length > 0 ? tag.description : undefined}
+                icon={<Icon name="tag" size={18} tone="faint" />}
+                divider={index > 0}
                 chevron
                 onPress={() => push(`/tags/${tag.id}/edit`)}
               />
             ))}
-          </FormSection>
+          </ListGroup>
         )}
       </View>
     </Screen>
@@ -66,12 +70,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: spacing.lg,
     gap: layout.sectionGap,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
   },
   center: {
     flex: 1,

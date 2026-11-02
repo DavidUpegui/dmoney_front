@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
@@ -10,16 +10,37 @@ import { Screen } from '@/components/screen';
 import { TextInput } from '@/components/text-input';
 import { ThemedText } from '@/components/themed-text';
 import { useLogin } from '@/lib/auth';
-import { colors, layout, spacing } from '@/theme';
+import { layout, spacing } from '@/theme';
 import { normalizeEmail, validateEmail, validatePassword } from '@/utils/auth-validation';
 import { errorMessage } from '@/utils/error-message';
 
+const DEV_EMAIL = process.env.EXPO_PUBLIC_DEV_EMAIL ?? 'emailprueba@gmail.com';
+const DEV_PASSWORD = process.env.EXPO_PUBLIC_DEV_PASSWORD ?? 'password';
+const DEV_AUTO_LOGIN = process.env.EXPO_PUBLIC_DEV_AUTO_LOGIN === '1';
+const useDevCredentials = __DEV__ && process.env.NODE_ENV !== 'test';
+
 export default function LoginScreen() {
   const params = useLocalSearchParams<{ email?: string; registered?: string }>();
-  const [email, setEmail] = useState(params.email ?? '');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(
+    params.email ?? (useDevCredentials ? DEV_EMAIL : ''),
+  );
+  const [password, setPassword] = useState(useDevCredentials ? DEV_PASSWORD : '');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const login = useLogin();
+  const autoLoginTried = useRef(false);
+
+  useEffect(() => {
+    if (
+      !useDevCredentials ||
+      !DEV_AUTO_LOGIN ||
+      autoLoginTried.current ||
+      params.registered != null
+    ) {
+      return;
+    }
+    autoLoginTried.current = true;
+    login.mutate({ email: normalizeEmail(DEV_EMAIL), password: DEV_PASSWORD });
+  }, [login, params.registered]);
 
   const submit = () => {
     const nextErrors = {
@@ -39,7 +60,7 @@ export default function LoginScreen() {
       : undefined;
 
   return (
-    <Screen grouped>
+    <Screen>
       <View style={styles.container}>
         <View style={styles.brand}>
           <BrandMark subtitle="Sign in to track every peso" />
@@ -80,7 +101,7 @@ export default function LoginScreen() {
         <View style={styles.footer}>
           <ThemedText variant="subhead">Don{'\u2019'}t have an account? </ThemedText>
           <Link href="/(auth)/register" style={styles.link}>
-            <ThemedText variant="subhead" style={styles.linkText}>
+            <ThemedText variant="subhead" tone="primary">
               Create one
             </ThemedText>
           </Link>
@@ -108,7 +129,10 @@ const styles = StyleSheet.create({
   link: {
     marginLeft: spacing.xs,
   },
-  linkText: {
-    color: colors.primary,
+  devHint: {
+    textAlign: 'center',
+  },
+  devLink: {
+    alignSelf: 'center',
   },
 });

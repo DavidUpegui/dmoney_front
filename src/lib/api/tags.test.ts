@@ -1,4 +1,4 @@
-import { createTag, deleteTag, listTags } from './tags';
+import { createTag, deleteTag, editTag, getTag, listTags } from './tags';
 import { tokenStore } from './token-store';
 
 jest.mock('./token-store', () => ({
@@ -32,7 +32,7 @@ describe('tags api', () => {
     mockedTokenStore.get.mockResolvedValue(null);
   });
 
-  it('GETs the tag list', async () => {
+  it('ftag01_gets_the_tag_list', async () => {
     fetchMock.mockResolvedValue(
       jsonResponse(200, [{ id: '1', name: 'vacation', description: '' }]),
     );
@@ -44,7 +44,19 @@ describe('tags api', () => {
     expect(init.method).toBeUndefined();
   });
 
-  it('POSTs a new tag', async () => {
+  it('ftag06_gets_a_tag_by_id', async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(200, { id: 't1', name: 'vacation', description: '' }),
+    );
+
+    await expect(getTag('t1')).resolves.toMatchObject({ id: 't1' });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('http://localhost:8080/api/tags/t1');
+    expect(init.method).toBeUndefined();
+  });
+
+  it('ftag05_posts_a_new_tag', async () => {
     fetchMock.mockResolvedValue(
       jsonResponse(201, { id: '1', name: 'vacation', description: '' }),
     );
@@ -57,7 +69,20 @@ describe('tags api', () => {
     expect(JSON.parse(init.body)).toEqual({ name: 'vacation' });
   });
 
-  it('DELETEs a tag', async () => {
+  it('ftag07_patches_a_tag', async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(200, { id: 't1', name: 'trips', description: '' }),
+    );
+
+    await editTag('t1', { name: 'trips' });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('http://localhost:8080/api/tags/t1');
+    expect(init.method).toBe('PATCH');
+    expect(JSON.parse(init.body)).toEqual({ name: 'trips' });
+  });
+
+  it('ftag08_deletes_a_tag', async () => {
     fetchMock.mockResolvedValue(jsonResponse(204, null));
 
     await expect(deleteTag('t1')).resolves.toBeUndefined();

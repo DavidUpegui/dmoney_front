@@ -35,7 +35,7 @@ export default function EditTagScreen() {
           sheetGrabberVisible: true,
         }}
       />
-      <Screen grouped scroll>
+      <Screen scroll>
         <View style={styles.container}>
           {tag.isLoading ? (
             <Spinner />

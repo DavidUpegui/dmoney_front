@@ -64,7 +64,7 @@ afterEach(() => {
 });
 
 describe('useLogin', () => {
-  it('stores the token on success', async () => {
+  it('fauth02_stores_the_token_on_success', async () => {
     mockedAuthApi.login.mockResolvedValue({ token: 'jwt-1' });
 
     const { result } = await renderHook(
@@ -81,7 +81,7 @@ describe('useLogin', () => {
     await waitFor(() => expect(result.current.auth.isAuthenticated).toBe(true));
   });
 
-  it('leaves the session unauthenticated on failure', async () => {
+  it('fauth03_leaves_the_session_unauthenticated_on_failure', async () => {
     mockedAuthApi.login.mockRejectedValue(new Error('bad credentials'));
 
     const { result } = await renderHook(
@@ -102,7 +102,7 @@ describe('useLogin', () => {
 });
 
 describe('useRegister', () => {
-  it('returns the userId without storing a token', async () => {
+  it('fauth04_returns_user_id_without_storing_token', async () => {
     mockedAuthApi.register.mockResolvedValue({ userId: 'u1' });
 
     const { result } = await renderHook(() => useRegister(), { wrapper: createWrapper() });
@@ -127,7 +127,7 @@ describe('useRegister', () => {
 });
 
 describe('global 401 handling', () => {
-  it('clears the session when a protected request returns 401', async () => {
+  it('fsys02_clears_the_session_on_401', async () => {
     mockedTokenStore.get.mockResolvedValue('jwt-1');
 
     const { result } = await renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -148,7 +148,7 @@ describe('global 401 handling', () => {
 });
 
 describe('session lifecycle', () => {
-  it('starts unauthenticated without a stored token', async () => {
+  it('fauth07_starts_unauthenticated_without_token', async () => {
     mockedTokenStore.get.mockResolvedValue(null);
 
     const { result } = await renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -157,7 +157,16 @@ describe('session lifecycle', () => {
     expect(result.current.isAuthenticated).toBe(false);
   });
 
-  it('restores a persisted session on launch', async () => {
+  it('fauth07_exposes_loading_while_hydrating', async () => {
+    mockedTokenStore.get.mockReturnValue(new Promise<string | null>(() => {}));
+
+    const { result } = await renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isAuthenticated).toBe(false);
+  });
+
+  it('fauth07_restores_persisted_session', async () => {
     mockedTokenStore.get.mockResolvedValue('jwt-1');
 
     const { result } = await renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -165,7 +174,7 @@ describe('session lifecycle', () => {
     await waitFor(() => expect(result.current.isAuthenticated).toBe(true));
   });
 
-  it('clears the session on signOut', async () => {
+  it('fauth08_clears_session_on_sign_out', async () => {
     mockedTokenStore.get.mockResolvedValue('jwt-1');
 
     const { result } = await renderHook(() => useAuth(), { wrapper: createWrapper() });

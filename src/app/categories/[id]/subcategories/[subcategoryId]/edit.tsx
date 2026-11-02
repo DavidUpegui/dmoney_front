@@ -47,7 +47,7 @@ export default function EditSubcategoryScreen() {
           sheetGrabberVisible: true,
         }}
       />
-      <Screen grouped scroll>
+      <Screen scroll>
         <View style={styles.container}>
           {subcategories.isLoading ? (
             <Spinner />
@@ -71,7 +71,11 @@ export default function EditSubcategoryScreen() {
               error={
                 editSubcategory.error != null
                   ? errorMessage(editSubcategory.error)
-                  : undefined
+                  : deleteSubcategory.error != null
+                    ? errorMessage(deleteSubcategory.error, {
+                        409: 'This subcategory still has movements',
+                      })
+                    : undefined
               }
               onDelete={onDelete}
               deleting={deleteSubcategory.isPending}

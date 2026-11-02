@@ -10,7 +10,7 @@ import { Screen } from '@/components/screen';
 import { TextInput } from '@/components/text-input';
 import { ThemedText } from '@/components/themed-text';
 import { useRegister } from '@/lib/auth';
-import { colors, layout, spacing } from '@/theme';
+import { layout, spacing } from '@/theme';
 import {
   normalizeEmail,
   validateEmail,
@@ -60,7 +60,7 @@ export default function RegisterScreen() {
       : undefined;
 
   return (
-    <Screen grouped>
+    <Screen>
       <View style={styles.container}>
         <View style={styles.brand}>
           <BrandMark subtitle="Create your account" />
@@ -107,7 +107,7 @@ export default function RegisterScreen() {
         <View style={styles.footer}>
           <ThemedText variant="subhead">Already have an account? </ThemedText>
           <Link href="/(auth)/login" style={styles.link}>
-            <ThemedText variant="subhead" style={styles.linkText}>
+            <ThemedText variant="subhead" tone="primary">
               Sign in
             </ThemedText>
           </Link>
@@ -134,8 +134,5 @@ const styles = StyleSheet.create({
   },
   link: {
     marginLeft: spacing.xs,
-  },
-  linkText: {
-    color: colors.primary,
   },
 });

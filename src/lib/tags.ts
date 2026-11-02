@@ -35,8 +35,9 @@ export function useEditTag() {
   return useMutation({
     mutationFn: ({ id, body }: { id: string; body: EditTagRequest }) =>
       tagsApi.editTag(id, body),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: tagKeys.all });
+      void queryClient.invalidateQueries({ queryKey: tagKeys.detail(variables.id) });
     },
   });
 }

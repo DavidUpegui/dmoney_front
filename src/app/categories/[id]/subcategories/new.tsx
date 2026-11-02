@@ -22,7 +22,7 @@ export default function NewSubcategoryScreen() {
           sheetGrabberVisible: true,
         }}
       />
-      <Screen grouped scroll>
+      <Screen scroll>
         <View style={styles.container}>
           <SubcategoryForm
             submitLabel="Create"
