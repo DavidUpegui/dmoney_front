@@ -5,6 +5,14 @@
     "paths": [".agents/skills", ".opencode/skills"]
   },
   "references": {
+    "specs": {
+      "path": "specs",
+      "description": "Requirements model and per-capability specs. Read specs/README.md before writing code; requirement IDs and their Validado blocks live here."
+    },
+    "contract": {
+      "path": "../dmoney_platform/contracts",
+      "description": "Shared HTTP contract with dmoney_back. API_CONTRACT.md is the curated contract; any new API assumption must be recorded there."
+    },
     "backend": {
       "path": "../dmoney_back/docs",
       "description": "Backend API contract and docs. api.md is the HTTP API (endpoints, request/response models, errors) — read it before adding or changing any API call. Also architecture.md and testing.md."
