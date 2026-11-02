@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 
-import { colors, motion, radius, spacing } from '@/theme';
+import { useColors } from '@/lib/theme';
+import { motion, radius, spacing } from '@/theme';
 import { ThemedText } from './themed-text';
 
 type FormBannerProps = {
@@ -10,17 +11,18 @@ type FormBannerProps = {
 };
 
 export function FormBanner({ message, tone = 'error' }: FormBannerProps) {
+  const colors = useColors();
   const reduceMotion = useReducedMotion();
-  const color = tone === 'error' ? colors.danger : colors.income;
+  const accent = tone === 'error' ? colors.danger : colors.income;
 
   return (
     <Animated.View
       accessibilityRole="alert"
       accessibilityLiveRegion="polite"
       entering={reduceMotion ? undefined : FadeInDown.duration(motion.base)}
-      style={[styles.container, { backgroundColor: colors.surfaceSecondary, borderColor: color }]}
+      style={[styles.container, { backgroundColor: colors.sunken, borderLeftColor: accent }]}
     >
-      <ThemedText variant="subhead" style={{ color }}>
+      <ThemedText variant="subhead" style={{ color: accent }}>
         {message}
       </ThemedText>
     </Animated.View>
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderRadius: radius.sm,
     borderCurve: 'continuous',
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
 });

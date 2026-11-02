@@ -1,33 +1,54 @@
 import { type ReactNode } from 'react';
-import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { ScrollView, StyleSheet, type StyleProp, type ViewStyle, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, layout } from '@/theme';
+import { useColors } from '@/lib/theme';
+import { layout, spacing } from '@/theme';
 
 type ScreenProps = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
-  grouped?: boolean;
+  scroll?: boolean;
+  header?: ReactNode;
 };
 
-export function Screen({ children, style, grouped = false }: ScreenProps) {
+export function Screen({ children, style, scroll = false, header }: ScreenProps) {
+  const colors = useColors();
+  const hasHeader = header != null;
+
   return (
-    <SafeAreaView
-      style={[styles.safe, grouped && styles.grouped, style]}
-      edges={['top', 'left', 'right', 'bottom']}
-    >
-      {children}
-    </SafeAreaView>
+    <View style={[styles.root, { backgroundColor: colors.canvas }]}>
+      {header}
+
+      <SafeAreaView
+        style={styles.flex}
+        edges={hasHeader ? ['left', 'right', 'bottom'] : ['top', 'left', 'right', 'bottom']}
+      >
+        {scroll ? (
+          <ScrollView
+            contentContainerStyle={[styles.content, style]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {children}
+          </ScrollView>
+        ) : (
+          <View style={[styles.content, styles.flex, style]}>{children}</View>
+        )}
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
+  root: {
     flex: 1,
-    backgroundColor: colors.surface,
-    paddingHorizontal: layout.screenPadding,
   },
-  grouped: {
-    backgroundColor: colors.groupedSurface,
+  content: {
+    paddingHorizontal: layout.screenPadding,
+    paddingBottom: spacing.xxl,
+  },
+  flex: {
+    flex: 1,
   },
 });

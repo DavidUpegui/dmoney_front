@@ -32,7 +32,7 @@ describe('auth api', () => {
     mockedTokenStore.get.mockResolvedValue(null);
   });
 
-  it('POSTs credentials to /auth/login and returns the token', async () => {
+  it('fauth01_posts_login_and_returns_token', async () => {
     fetchMock.mockResolvedValue(jsonResponse(200, { token: 'jwt' }));
 
     await expect(login({ email: 'a@b.com', password: 'secret' })).resolves.toEqual({
@@ -45,7 +45,7 @@ describe('auth api', () => {
     expect(JSON.parse(init.body)).toEqual({ email: 'a@b.com', password: 'secret' });
   });
 
-  it('POSTs registration to /auth/register and returns the userId', async () => {
+  it('fauth04_posts_registration_and_returns_user_id', async () => {
     fetchMock.mockResolvedValue(jsonResponse(201, { userId: 'u1' }));
 
     await expect(

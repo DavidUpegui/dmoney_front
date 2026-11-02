@@ -1,117 +1,87 @@
-# Feature: Tags
+# Tags
 
-- **Status:** `draft`
-- **Folder:** `004-tags`
-- **Related area:** `tracker`
+Tags label movements across the category tree so the user can group spending
+by theme (vacation, work, family). A tag belongs to the authenticated user.
 
-## UI / UX Directives
+## UI / UX Directives (temporary)
 
-Applies to every screen in this feature. Before writing UI code, load the skills
-`frontend-design`, `expo-design-system`, `expo-native-ui`, `expo-ui`,
-`expo-animation`, `vercel-react-native-skills` (and `web-design-guidelines` for
-the web target), routing the work through `expo-overview`.
+> These directives will move to `docs/ui.md` in a later pass. Until then they
+> stay here and are not duplicated in other specs.
 
-- **Tokens only** — every color, space, radius, type size, and motion value comes
+- **Tokens only** — every color, space, radius, type size and motion value comes
   from `@/theme`; no hardcoded values in screens or components.
 - **Spacing rhythm** — 4-pt grid; screens pad 20 horizontally; group related
   fields into inset sections; separate with `gap`, not ad-hoc margins.
 - **Typography** — one system type scale; build hierarchy with weight and color
   before size; money uses tabular figures.
-- **Native controls first** — reach for `@expo/ui` (sheets, pickers, switches,
-  grouped rows, form sections) before RN built-ins or community libraries;
-  native stack + `NativeTabs` for navigation; `Pressable` over Touchables.
-- **Semantic color** — light/dark via `Color` from `expo-router`; income and
-  outcome use their tokens.
+- **Native controls first** — reach for `@expo/ui` before RN built-ins or
+  community libraries; `Pressable` over Touchables.
+- **Semantic color** — light/dark via the theme; income and outcome use their
+  tokens.
 - **Four states** — data screens implement loading / error / empty / content;
   empty states invite an action.
-- **Motion** — user-triggered feedback only (press, reveal, confirm); animate
-  transform/opacity; respect reduced motion; no decorative entrances.
+- **Motion** — user-triggered feedback only; animate transform/opacity; respect
+  reduced motion.
 - **Accessibility** — labelled fields and controls, roles, visible focus,
   contrast, Dynamic Type.
 - **Copy** — sentence case, active voice, the user's vocabulary; errors state
   what happened and how to fix it.
 
-## 1. Overview
+## Requirements
 
-Full management of movement tags: list, create, edit, and delete. Tags are
-free-form labels attached to movements (see 005-movements) and are owned by the
-authenticated user.
+- **FTAG01** — The tags tab lists the user's tags with name and description.
+- **FTAG02** — When there are no tags, the list shows an empty state with a
+  create action.
+- **FTAG03** — The “Add” action opens the create sheet.
+- **FTAG04** — The form requires a non-blank name, trims the values before
+  submitting, and disables the submit button while the request is pending.
+- **FTAG05** — A successful create refreshes the list and returns to the
+  previous screen.
+- **FTAG06** — Tapping a tag opens the edit sheet with its current name and
+  description.
+- **FTAG07** — A successful edit refreshes the list and the tag detail, and
+  returns to the previous screen.
+- **FTAG08** — Deleting asks for confirmation; confirming removes the tag and
+  refreshes the list, cancelling leaves it untouched.
+- **FTAG09** — A `409` from the API is shown inline on the form.
 
-Actors: the authenticated user.
+The four states are `FSYS01`; the `401` redirect is `FSYS02`; the server message
+on errors is `FSYS03`. They are not repeated here.
 
-## 2. Requirements
+## Routes & Screens
 
-### Functional (FR)
+| Screen | Route | States |
+|--------|-------|--------|
+| `TagList` | `/tags` | loading, error, empty, content |
+| `TagForm` (create) | `/tags/new` | form, pending, server error |
+| `TagForm` (edit) | `/tags/[id]/edit` | loading, error, form, pending, server error |
 
-- **FR-1** — List all tags (`GET /api/tags`) with name and description.
-- **FR-2** — Create a tag (`POST /api/tags`) with required `name`, optional
-  `description`.
-- **FR-3** — Edit a tag (`PATCH /api/tags/{id}`); all fields optional.
-- **FR-4** — Delete a tag (`DELETE /api/tags/{id}`) after confirmation.
-- **FR-5** — Mutations invalidate the tag list query.
+- The list is the `(tabs)` route `/tags`; the `tags/` stack is a sibling of the
+  tabs and is guarded by the root auth gate.
+- Create and edit present as modal sheets (`presentation: 'formSheet'`); delete
+  lives on the edit sheet behind a confirmation.
 
-### Non-functional (NFR)
+## API Consumption
 
-- **NFR-1** — Four states (loading/error/empty/content) on the list.
-- **NFR-2** — Confirm before delete.
-- **NFR-3** — Accessibility: readable errors and reachable actions.
+| Method | Path | Req | Hook | Cache key |
+|--------|------|-----|------|-----------|
+| `GET` | `/api/tags` | FTAG01 | `useTags` | `['tags']` |
+| `GET` | `/api/tags/{id}` | FTAG06 | `useTag` | `['tags', id]` |
+| `POST` | `/api/tags` | FTAG05 | `useCreateTag` | invalidates `['tags']` |
+| `PATCH` | `/api/tags/{id}` | FTAG07 | `useEditTag` | invalidates `['tags']`, `['tags', id]` |
+| `DELETE` | `/api/tags/{id}` | FTAG08 | `useDeleteTag` | removes `['tags', id]`, invalidates `['tags']` |
 
-## 3. Navigation & Routes
-
-```
-src/app/
-  (tabs)/
-    tags.tsx             # /tags — list
-  tags/
-    new.tsx              # /tags/new — create (modal)
-    [id]/edit.tsx        # /tags/[id]/edit — edit (modal)
-```
-
-- Create/edit present as modal sheets on the tags tab's stack.
-
-## 4. Screens & UI
-
-| Screen | Route | States & affordances |
-|--------|-------|----------------------|
-| `TagList` | `/tags` | loading → spinner; empty → "Sin etiquetas" + Create; error → retry; content → list |
-| `TagForm` | `/tags/new`, `/tags/[id]/edit` | inline validation; save disabled while pending |
-
-Reusable: `Card`, `Button`, `TextInput`, `EmptyState`, `ErrorState`, `Spinner`.
-
-## 5. Data Fetching & API
-
-| Method | Path | Query / Mutation | Cache key |
-|--------|------|------------------|-----------|
-| `GET` | `/api/tags` | `useTags` | `['tags']` |
-| `GET` | `/api/tags/{id}` | `useTag` | `['tags', id]` |
-| `POST` | `/api/tags` | `useCreateTag` | invalidates `['tags']` |
-| `PATCH` | `/api/tags/{id}` | `useEditTag` | invalidates `['tags']`, `['tags', id]` |
-| `DELETE` | `/api/tags/{id}` | `useDeleteTag` | invalidates `['tags']` |
-
-### Request / Response examples
-
-```json
-GET /api/tags
-→ 200 [ { "id": "uuid", "name": "vacation", "description": "Trip to Italy" } ]
-```
-
-```json
-POST /api/tags
-{ "name": "vacation", "description": "Trip to Italy" }
-→ 201 { "id": "uuid", "name": "vacation", "description": "Trip to Italy" }
-```
-
-### Status code → UI mapping
+### Status → UI
 
 - `200/201` — content / success
-- `204` — deleted → refresh list
-- `400` — validation error → inline `message`
-- `401` — redirect to login (global)
-- `404` — not found → error state
-- `409` — duplicate name → inline `message`
-- `5xx` — retryable error
+- `204` — deleted, back to the list
+- `400` — inline validation message
+- `401` — clear session and redirect to login (global, `FSYS02`)
+- `404` — error state
+- `409` — inline message on the form
+- `5xx` — retryable error state
 
-## 6. Data Model
+## Local model
 
 ```ts
 type Tag = { id: string; name: string; description: string };
@@ -119,38 +89,13 @@ type CreateTagRequest = { name: string; description?: string };
 type EditTagRequest = { name?: string; description?: string };
 ```
 
-## 7. Business Rules & Validation
+Name and description are trimmed; the name is required and at most 100 chars
+client-side, the description at most 255.
 
-- **BR-1** — Tag `name` is required (non-blank).
-- **BR-2** — Blank names are rejected client-side (backend enforces non-blank
-  on edit via pattern).
-- **BR-3** — A `409` (duplicate name) is shown inline.
-- **BR-4** — Deleting a tag is destructive and requires confirmation.
+## Out of Scope
 
-## 8. Edge Cases
-
-- Empty tag list → empty state with Create action.
-- Duplicate name → `409` inline.
-- Delete a tag still referenced by movements → backend may reject or allow;
-  if it fails, surface the message.
-- In-flight mutation → disable submit to prevent duplicates.
-
-## 9. Acceptance Criteria
-
-- **AC-1** — Given tags exist, when opening `/tags`, then they are listed with
-  name and description.
-- **AC-2** — Given no tags, when opening `/tags`, then an empty state with a
-  Create action is shown.
-- **AC-3** — Given a valid create form, when submitted, then `201` is returned
-  and the list refreshes.
-- **AC-4** — Given a duplicate tag name, when submitting, then `409` is shown
-  inline.
-- **AC-5** — Given an edit form, when a field changes and saves, then `PATCH`
-  updates it and the list reflects it.
-- **AC-6** — Given a delete confirmation, when confirmed, then `204` is
-  returned and the tag disappears.
-
-## 10. Out of Scope
-
-- Tag coloring/icons (no backend fields for them).
-- Bulk operations / import-export.
+- Tag colours, icons and ordering.
+- Bulk operations and import/export.
+- Visual polish, manual cross-device checks and motion work; deferred to the
+  `docs/ui.md` pass.
+- Pagination.

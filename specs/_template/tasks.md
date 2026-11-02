@@ -1,22 +1,9 @@
-# Tasks: <Feature Name>
+# Tasks: <Capability>
 
-Checklist of work items. Mark `[x]` when done.
+## FTAG01 — <Requirement title>
+- [ ] <Work item> (`app` | `components` | `lib` | `utils`)
+- [ ] **Validado** — `ftag01_*` (N tests)
 
-## Spec
-- [ ] `spec.md` written and reviewed
-
-## Implementation
-- [ ] Routes done (`src/app/...`)
-- [ ] Screens done (`src/screens/...`)
-- [ ] Components done (`src/components/...`)
-- [ ] Data fetching done (React Query hooks + API client)
-- [ ] UI/UX Directives applied (skills loaded; tokens only; native controls; motion)
-
-## Tests
-- [ ] Component / hook tests
-
-## Verification
-- [ ] `npx tsc --noEmit` passes
-- [ ] `npx expo lint` passes
-- [ ] `npm test` (jest-expo) passes
-- [ ] Visual check on mobile + web (screenshots)
+## FTAG02 — <Requirement title>
+- [ ] <Work item>
+- [ ] **Validado** — `ftag02_*` (N tests)

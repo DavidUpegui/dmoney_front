@@ -1,35 +1,42 @@
 # Tasks: Authentication
 
-Checklist of work items. Mark `[x]` when done.
+## FAUTH01 — Login submits credentials
+- [x] `useLogin` + `POST /auth/login` (`lib`)
+- [x] Login form with email and password (`app`)
+- [x] **Validado** — `fauth01_*` (2 tests)
 
-## Spec
-- [x] `spec.md` written and reviewed
+## FAUTH02 — Valid login stores the token
+- [x] `AuthProvider` stores the token in `tokenStore` (`lib`)
+- [x] The auth gate routes to the tabs (`app`)
+- [x] **Validado** — `fauth02_*` (1 tests)
 
-## Implementation
-- [x] Auth provider + session state + token store wiring
-- [x] Login screen + `useLogin`
-- [x] Register screen + `useRegister`
-- [x] Auth gate routing (splash → login/tabs)
-- [x] Global 401 handler
-- [x] Settings logout
+## FAUTH03 — Invalid credentials inline
+- [x] `401` mapped to the form banner (`app`)
+- [x] No token stored on failure (`lib`)
+- [x] **Validado** — `fauth03_*` (2 tests)
 
-## Tests
-- [x] Form validation tests
-- [x] Mutation tests
-- [x] Auth gate / session-state tests
-- [x] 401 handling tests
+## FAUTH04 — Register submits and handles 409
+- [x] `useRegister` + `POST /auth/register` (`lib`)
+- [x] Register form (`app`)
+- [x] `409` inline (`app`)
+- [x] **Validado** — `fauth04_*` (4 tests)
 
-## UI revision (Native restraint)
-- [x] `src/theme.ts` extended (spacing, control heights, grouped surface, motion)
-- [x] New components added: `BrandMark`, `FormSection`, `ListRow`
-- [x] `Screen`/`TextInput`/`Button` restyled (tokens only, 20 px padding)
-- [x] Login rebuilt (brand + inset form + full-width primary action)
-- [x] Register rebuilt (matches Login)
-- [x] Settings rebuilt (inset grouped rows + destructive logout)
-- [x] Motion added (press feedback, banner reveal); reduced motion honored
+## FAUTH05 — Client validation mirrors the back-end
+- [x] Email format/max 255, password min 8, name max 100 (`utils`)
+- [x] Submit disabled while pending (`components`)
+- [x] **Validado** — `fauth05_*` (13 tests)
 
-## Verification
-- [x] `npx tsc --noEmit` passes
-- [x] `npx expo lint` passes
-- [x] `npm test` (jest-expo) passes
-- [ ] Visual check in light/dark + reduced motion (mobile + web)
+## FAUTH06 — Register returns to login
+- [x] Redirect with the email prefilled and a success banner (`app`)
+- [x] **Validado** — `fauth06_*` (2 tests)
+
+## FAUTH07 — Session hydration
+- [x] `AuthProvider` restores the persisted token and exposes `isLoading` (`lib`)
+- [x] Root gate shows a splash while hydrating (`app`)
+- [x] **Validado** — `fauth07_*` (3 tests)
+
+## FAUTH08 — Logout
+- [x] Confirmation then `signOut` (`app`)
+- [x] Token cleared and login shown (`lib`)
+- [x] **Validado** — `fauth08_*` (2 tests)
+

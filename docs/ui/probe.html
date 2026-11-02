@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dmoney · UI probe v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     TOKENS · defaults are Cobalt / Slate light
+     Every token block is scoped to a .device element, so a
+     frozen phone keeps its own variables when the live one changes.
+     ============================================================ */
+  :root {
+    --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --display-font: var(--font);
+    --primary: #0D5BFF;
+    --primary-pressed: #0045CC;
+    --primary-surface: #EFF6FF;
+    --accent: var(--primary);
+    --canvas: #F8FAFC;
+    --surface: #FFFFFF;
+    --sunken: #F1F5F9;
+    --ink: #0F172A;
+    --ink-secondary: #64748B;
+    --ink-faint: #94A3B8;
+    --hairline: #E2E8F0;
+    --income: #047857;
+    --outcome: #DC2626;
+    --transfer: #2563EB;
+    --danger: #DC2626;
+    --on-primary: #FFFFFF;
+    --shadow: 0 1px 2px rgba(15, 23, 42, .06);
+    --shadow-raised: 0 12px 32px rgba(15, 23, 42, .16);
+  }
+
+  /* ---------- Palette: Cobalt / Slate ---------- */
+  [data-palette="cobalt"] {
+    --primary: #0D5BFF;
+    --primary-pressed: #0045CC;
+    --primary-surface: #EFF6FF;
+    --accent: var(--primary);
+    --canvas: #F8FAFC;
+    --surface: #FFFFFF;
+    --sunken: #F1F5F9;
+    --ink: #0F172A;
+    --ink-secondary: #64748B;
+    --ink-faint: #94A3B8;
+    --hairline: #E2E8F0;
+    --income: #047857;
+    --outcome: #DC2626;
+    --transfer: #2563EB;
+    --on-primary: #FFFFFF;
+  }
+  [data-theme="dark"][data-palette="cobalt"] {
+    --primary: #4D8DFF;
+    --primary-pressed: #3B7BE8;
+    --primary-surface: #102A56;
+    --accent: var(--primary);
+    --canvas: #0B1220;
+    --surface: #121A2A;
+    --sunken: #0F172A;
+    --ink: #E2E8F0;
+    --ink-secondary: #94A3B8;
+    --ink-faint: #64748B;
+    --hairline: #1E293B;
+    --income: #34D399;
+    --outcome: #F87171;
+    --transfer: #60A5FA;
+    --on-primary: #06122A;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+    --shadow-raised: 0 12px 32px rgba(0, 0, 0, .5);
+  }
+
+  /* ---------- Palette: Petrol / Stone ---------- */
+  [data-palette="petrol"] {
+    --primary: #0F766E;
+    --primary-pressed: #115E59;
+    --primary-surface: #E4F1EE;
+    --accent: var(--primary);
+    --canvas: #F6F3EE;
+    --surface: #FFFDF9;
+    --sunken: #F2EDE6;
+    --ink: #1B2A26;
+    --ink-secondary: #5E6E69;
+    --ink-faint: #6A7872;
+    --hairline: #E1DBD1;
+    --income: #166534;
+    --outcome: #B91C1C;
+    --transfer: #1D4ED8;
+    --on-primary: #FFFFFF;
+  }
+  [data-theme="dark"][data-palette="petrol"] {
+    --primary: #2DD4BF;
+    --primary-pressed: #14B8A6;
+    --primary-surface: #0F2E29;
+    --accent: var(--primary);
+    --canvas: #0C1413;
+    --surface: #151F1D;
+    --sunken: #0F1917;
+    --ink: #E4EFEC;
+    --ink-secondary: #A0B2AD;
+    --ink-faint: #8A8278;
+    --hairline: #26332F;
+    --income: #4ADE80;
+    --outcome: #FCA5A5;
+    --transfer: #60A5FA;
+    --on-primary: #04211E;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow-raised: 0 12px 32px rgba(0, 0, 0, .55);
+  }
+
+  /* ---------- Palette: Indigo / Sand ---------- */
+  [data-palette="indigo"] {
+    --primary: #4338CA;
+    --primary-pressed: #3730A3;
+    --primary-surface: #ECEAFB;
+    --accent: var(--primary);
+    --canvas: #F7F2E8;
+    --surface: #FFFCF5;
+    --sunken: #F0E8D9;
+    --ink: #1E1B2E;
+    --ink-secondary: #6A6479;
+    --ink-faint: #A29CAE;
+    --hairline: #E3D9C9;
+    --income: #047857;
+    --outcome: #BE123C;
+    --transfer: #0E7490;
+    --on-primary: #FFFFFF;
+  }
+  [data-theme="dark"][data-palette="indigo"] {
+    --primary: #818CF8;
+    --primary-pressed: #6366F1;
+    --primary-surface: #221D4A;
+    --accent: var(--primary);
+    --canvas: #131120;
+    --surface: #1B1830;
+    --sunken: #161327;
+    --ink: #E9E5F5;
+    --ink-secondary: #A9A2BE;
+    --ink-faint: #6E6883;
+    --hairline: #2C2742;
+    --income: #34D399;
+    --outcome: #FB7185;
+    --transfer: #22D3EE;
+    --on-primary: #0B0820;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+    --shadow-raised: 0 12px 32px rgba(0, 0, 0, .5);
+  }
+
+  /* ---------- Palette: Ink / Clay ---------- */
+  [data-palette="ink"] {
+    --primary: #1F2937;
+    --primary-pressed: #111827;
+    --primary-surface: #F0EBE3;
+    --accent: #C2410C;
+    --canvas: #FAF7F2;
+    --surface: #FFFFFF;
+    --sunken: #F1ECE4;
+    --ink: #171310;
+    --ink-secondary: #6B645B;
+    --ink-faint: #9C948A;
+    --hairline: #E5DED3;
+    --income: #15803D;
+    --outcome: #B91C1C;
+    --transfer: #0369A1;
+    --on-primary: #FFFFFF;
+  }
+  [data-theme="dark"][data-palette="ink"] {
+    --primary: #E7E2DA;
+    --primary-pressed: #D6D0C6;
+    --primary-surface: #26201A;
+    --accent: #FB923C;
+    --canvas: #12100E;
+    --surface: #1A1714;
+    --sunken: #15120F;
+    --ink: #F2EDE7;
+    --ink-secondary: #B3ACA3;
+    --ink-faint: #7C756C;
+    --hairline: #2C2721;
+    --income: #4ADE80;
+    --outcome: #F87171;
+    --transfer: #38BDF8;
+    --on-primary: #14100C;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .45);
+    --shadow-raised: 0 12px 32px rgba(0, 0, 0, .6);
+  }
+
+  /* ---------- Dark canvas variants (override neutrals only) ---------- */
+  [data-theme="dark"][data-dark="black"] {
+    --canvas: #000000;
+    --surface: #0A0A0A;
+    --sunken: #050505;
+    --hairline: #1F1F1F;
+    --ink: #F5F5F5;
+    --ink-secondary: #A3A3A3;
+    --ink-faint: #6B6B6B;
+  }
+  [data-theme="dark"][data-dark="warm"] {
+    --canvas: #12100E;
+    --surface: #1A1714;
+    --sunken: #151210;
+    --hairline: #2C2721;
+    --ink: #F2EDE7;
+    --ink-secondary: #B3ACA3;
+    --ink-faint: #7C756C;
+  }
+
+  /* ---------- Fonts ---------- */
+  [data-font="jakarta"] { --font: 'Plus Jakarta Sans', system-ui, sans-serif; }
+  [data-font="manrope"] { --font: 'Manrope', system-ui, sans-serif; }
+  [data-font="inter"] { --font: 'Inter', system-ui, sans-serif; }
+  [data-font="dmsans"] { --font: 'DM Sans', system-ui, sans-serif; }
+  [data-font="sora"] { --font: 'Sora', system-ui, sans-serif; }
+
+  /* Resolve display + danger per device, so a font change carries into the
+     display face and the semantic red follows the palette. */
+  .device {
+    --display-font: var(--font);
+    --danger: var(--outcome);
+    --placeholder: var(--ink-secondary);
+  }
+  [data-theme="dark"] { --placeholder: var(--ink-faint); }
+  [data-display="jakarta"] { --display-font: 'Plus Jakarta Sans', system-ui, sans-serif; }
+  [data-display="serif"] { --display-font: 'Fraunces', Georgia, serif; }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  [data-summary="off"] .summary { display: none !important; }
+  .actionbar { display: none; }
+  [data-screen="form"] .actionbar { display: block; }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #0E1116;
+    color: #E2E8F0;
+    font-family: Inter, system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============================================================
+     PROBE CHROME
+     ============================================================ */
+  .probe {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    padding: 10px 18px;
+    background: #080B11;
+    border-bottom: 1px solid #1E293B;
+    font-size: 12px;
+  }
+  .probe strong { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #7C8AA0; }
+  .probe label { display: inline-flex; align-items: center; gap: 6px; color: #94A3B8; white-space: nowrap; }
+  .probe select {
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #111C2E;
+    color: #F8FAFC;
+    font: inherit;
+    padding: 0 6px;
+    outline: none;
+    max-width: 150px;
+  }
+  .probe input[type="checkbox"] { accent-color: #0D5BFF; }
+  .probe button {
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #111C2E;
+    color: #F8FAFC;
+    font: inherit;
+    padding: 0 10px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .probe button:hover { background: #1B2A41; }
+  .probe .sep { width: 1px; height: 22px; background: #1E293B; }
+  .probe-note { color: #52627A; font-size: 11px; }
+  .combo {
+    margin-left: auto;
+    color: #64748B;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  #show-probe {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 110;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0F172A;
+    color: #F8FAFC;
+    font: 600 12px Inter, sans-serif;
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  /* ============================================================
+     STAGE
+     ============================================================ */
+  .stage {
+    min-height: calc(100vh - 54px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 30px 16px 48px;
+  }
+  .pane { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .pane-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #64748B;
+    height: 16px;
+  }
+  .pane.is-frozen .pane-label { color: #F59E0B; }
+  .pane[hidden] { display: none; }
+
+  .device {
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--canvas);
+    border-radius: 44px;
+  }
+
+  .phone {
+    width: 390px;
+    height: 844px;
+    padding: 8px;
+    border-radius: 44px;
+    background: var(--canvas);
+    border: 1px solid var(--hairline);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background: var(--canvas);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .statusbar {
+    height: 44px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .status-icons { display: flex; gap: 5px; align-items: center; }
+  .status-icons span { display: block; background: var(--ink); border-radius: 2px; }
+  .signal { width: 14px; height: 8px; }
+  .wifi { width: 12px; height: 8px; opacity: .8; }
+  .battery { width: 18px; height: 9px; opacity: .9; }
+
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 96px;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 0 16px;
+  }
+  .header h1 {
+    margin: 0;
+    font-family: var(--display-font);
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 800;
+    letter-spacing: -.4px;
+  }
+
+  .add-pill {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--primary);
+    color: var(--on-primary);
+    font: 700 13px var(--font);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+
+  .summary {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .summary-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 10px;
+  }
+  .month-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--primary-surface);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+  }
+  .currency-pill {
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    background: var(--sunken);
+    color: var(--ink-secondary);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .summary-label { font-size: 12px; font-weight: 600; color: var(--ink-secondary); }
+  .net-amount {
+    font-family: var(--display-font);
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 800;
+    letter-spacing: -.8px;
+    font-variant-numeric: tabular-nums;
+    margin: 2px 0 12px;
+  }
+  .net-amount small { font-size: 12px; font-weight: 700; color: var(--ink-secondary); letter-spacing: 0; }
+
+  .flows { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .flow {
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+  }
+  .flow.in { background: color-mix(in srgb, var(--income) 9%, var(--surface)); border-color: color-mix(in srgb, var(--income) 22%, var(--hairline)); }
+  .flow.out { background: color-mix(in srgb, var(--outcome) 9%, var(--surface)); border-color: color-mix(in srgb, var(--outcome) 22%, var(--hairline)); }
+  .flow-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+  .flow.in .flow-label { color: var(--income); }
+  .flow.out .flow-label { color: var(--outcome); }
+  .flow-amount { margin-top: 4px; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .flow.in .flow-amount { color: var(--income); }
+  .flow.out .flow-amount { color: var(--outcome); }
+
+  .toolbar { display: flex; gap: 8px; margin-bottom: 6px; }
+  .search {
+    flex: 1;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border-radius: 12px;
+    border: 1px solid var(--hairline);
+    background: var(--sunken);
+    color: var(--ink-secondary);
+  }
+  .search input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font: 400 14px var(--font);
+  }
+  .search input::placeholder { color: var(--placeholder); }
+  .filter {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--ink-secondary);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--on-primary);
+    font: 800 12px var(--font);
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+  }
+
+  .day {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 0 8px;
+  }
+  .day-label { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-secondary); }
+  .day-net { font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+  .day-net.neg { color: var(--outcome); background: color-mix(in srgb, var(--outcome) 10%, transparent); }
+  .day-net.pos { color: var(--income); background: color-mix(in srgb, var(--income) 10%, transparent); }
+
+  .group { display: flex; flex-direction: column; gap: 8px; }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+  }
+
+  .icon-tile {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--sunken);
+    color: var(--ink-faint);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .row-main { flex: 1; min-width: 0; }
+  .row-title { font-size: 15px; line-height: 20px; font-weight: 700; }
+  .row-meta { margin-top: 2px; font-size: 12px; line-height: 17px; color: var(--ink-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-tags { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 12px;
+    line-height: 17px;
+    font-weight: 600;
+    color: var(--ink-secondary);
+    background: var(--sunken);
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    padding: 1px 7px;
+  }
+  .row-amount {
+    font-size: 15px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.2px;
+    white-space: nowrap;
+  }
+  .income { color: var(--income); }
+  .outcome { color: var(--outcome); }
+  .transfer { color: var(--transfer); }
+
+  .tabbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 76px;
+    padding: 8px 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: var(--surface);
+    border-top: 1px solid var(--hairline);
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    color: var(--ink-faint);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tab.active { color: var(--accent); }
+  .tab .ic { width: 21px; height: 21px; }
+
+  .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ic-sm { width: 16px; height: 16px; }
+  .ic-lg { width: 24px; height: 24px; }
+
+  /* ---------- Form ---------- */
+  .sheet-grabber {
+    width: 40px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--hairline);
+    margin: 8px auto 2px;
+  }
+  .form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 0 14px;
+  }
+  .form-header h1 {
+    margin: 0;
+    font-family: var(--display-font);
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 800;
+    letter-spacing: -.4px;
+  }
+  .cancel {
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--sunken);
+    color: var(--ink-secondary);
+    font: 700 12px var(--font);
+    cursor: pointer;
+  }
+
+  .segmented {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--sunken);
+    border: 1px solid var(--hairline);
+    margin-bottom: 14px;
+  }
+  .seg {
+    flex: 1;
+    height: 38px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--ink-secondary);
+    font: 700 12px var(--font);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .seg.active {
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    color: var(--outcome);
+  }
+  .seg .dot { width: 6px; height: 6px; border-radius: 999px; background: transparent; }
+  .seg.active .dot { background: currentColor; }
+
+  .amount-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .amount-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-secondary);
+  }
+  .amount-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .amount-line .symbol { font-size: 22px; font-weight: 700; color: var(--ink-secondary); }
+  .amount-line .value {
+    font-family: var(--display-font);
+    font-size: 38px;
+    line-height: 46px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .amount-line .cop { font-size: 12px; font-weight: 800; color: var(--ink-faint); }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 2px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-secondary);
+  }
+  .section-label::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+  .line + .line { border-top: 1px solid var(--hairline); }
+  .line .icon-tile { width: 36px; height: 36px; border-radius: 10px; }
+  .line-main { flex: 1; min-width: 0; }
+  .line-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-secondary);
+  }
+  .line-value { margin-top: 1px; font-size: 15px; font-weight: 700; }
+  .line-hint { font-size: 12px; color: var(--ink-secondary); }
+  .line-sub { padding-left: 26px; position: relative; }
+  .line-sub::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: -8px;
+    width: 1px;
+    height: 18px;
+    background: var(--hairline);
+  }
+  .line-trailing { display: flex; align-items: center; gap: 6px; color: var(--ink-faint); }
+  .today-pill {
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--sunken);
+    border: 1px solid var(--hairline);
+    color: var(--ink-secondary);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .tag-row { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .tag-row-head { display: flex; align-items: center; gap: 12px; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 48px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 9px;
+    border-radius: 8px;
+    background: var(--sunken);
+    border: 1px solid var(--hairline);
+    color: var(--ink-secondary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .chip button {
+    border: 0;
+    background: transparent;
+    color: var(--ink-faint);
+    display: grid;
+    place-items: center;
+    padding: 0;
+    cursor: pointer;
+  }
+  .add-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 9px;
+    border-radius: 8px;
+    border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--hairline));
+    background: var(--surface);
+    color: var(--accent);
+    font: 700 12px var(--font);
+    cursor: pointer;
+  }
+
+  .actionbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 20px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--hairline);
+  }
+  .primary-btn {
+    width: 100%;
+    height: 52px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--on-primary);
+    font: 800 15px var(--font);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 28%, transparent);
+  }
+
+  .form-screen { padding-bottom: 96px; }
+
+  /* ============================================================
+     AXIS: SURFACE
+     cards  = separate cards with hairline + soft shadow (default)
+     inset  = one container per group, rows divided by hairlines
+     border = separate cards, hairline only, no shadow
+     ============================================================ */
+  [data-surface="inset"] .summary,
+  [data-surface="inset"] .amount-card,
+  [data-surface="inset"] .panel { box-shadow: none; }
+
+  [data-surface="inset"] .group {
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  [data-surface="inset"] .row {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    padding: 14px 16px;
+  }
+  [data-surface="inset"] .row + .row { border-top: 1px solid var(--hairline); }
+
+  [data-surface="border"] .row,
+  [data-surface="border"] .summary,
+  [data-surface="border"] .amount-card,
+  [data-surface="border"] .panel { box-shadow: none; }
+
+  /* ============================================================
+     AXIS: DENSITY
+     ============================================================ */
+  [data-density="compact"] .header { padding: 2px 0 12px; }
+  [data-density="compact"] .summary { padding: 12px; margin-bottom: 12px; }
+  [data-density="compact"] .net-amount { font-size: 27px; line-height: 32px; margin-bottom: 10px; }
+  [data-density="compact"] .day { margin: 12px 0 6px; }
+  [data-density="compact"] .group { gap: 6px; }
+  [data-density="compact"] .row { padding: 10px 12px; gap: 10px; }
+  [data-density="compact"] .row-tags { margin-top: 4px; }
+  [data-density="compact"] .icon-tile { width: 36px; height: 36px; border-radius: 10px; }
+  [data-density="compact"] .line { padding: 9px 12px; }
+  [data-density="compact"] .tag-row { padding: 10px 12px; gap: 8px; }
+  [data-density="compact"] .amount-card { padding: 12px; margin-bottom: 12px; }
+  [data-density="compact"] .amount-line .value { font-size: 34px; line-height: 40px; }
+  [data-density="compact"] .panel { margin-bottom: 12px; }
+  [data-density="compact"] .seg { height: 34px; }
+  [data-density="compact"] .segmented { margin-bottom: 12px; }
+  [data-density="compact"] .form-header { padding-bottom: 10px; }
+
+  /* ============================================================
+     AXIS: MONEY
+     color   = amounts carry the semantic color
+     neutral = amounts in ink; type is read from the sign and meta
+     ============================================================ */
+  [data-money="neutral"] .row-amount { color: var(--ink); }
+  [data-money="neutral"] .day-net.pos,
+  [data-money="neutral"] .day-net.neg { color: var(--ink-secondary); background: var(--sunken); }
+  [data-money="neutral"] .flow-amount { color: var(--ink); }
+  [data-money="neutral"] .flow.in,
+  [data-money="neutral"] .flow.out { background: var(--surface); border-color: var(--hairline); }
+</style>
+</head>
+<body>
+
+<!-- Icon sprite (Lucide-style, MIT) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M10 18h4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z"/><circle cx="7" cy="7" r="1"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+  </defs>
+</svg>
+
+<div class="probe" id="probe">
+  <strong>Probe v2</strong>
+  <span class="probe-note">not the app</span>
+
+  <label>Theme
+    <select data-set="theme">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </label>
+
+  <label>Palette
+    <select data-set="palette">
+      <option value="cobalt">Cobalt / Slate</option>
+      <option value="petrol">Petrol / Stone</option>
+      <option value="indigo">Indigo / Sand</option>
+      <option value="ink">Ink / Clay</option>
+    </select>
+  </label>
+
+  <label>Font
+    <select data-set="font">
+      <option value="jakarta">Plus Jakarta</option>
+      <option value="manrope">Manrope</option>
+      <option value="inter">Inter</option>
+      <option value="dmsans">DM Sans</option>
+      <option value="sora">Sora</option>
+    </select>
+  </label>
+
+  <label>Display
+    <select data-set="display">
+      <option value="match">Match body</option>
+      <option value="jakarta">Plus Jakarta</option>
+      <option value="serif">Fraunces</option>
+    </select>
+  </label>
+
+  <label>Surface
+    <select data-set="surface">
+      <option value="cards">Cards</option>
+      <option value="inset">Inset</option>
+      <option value="border">Border only</option>
+    </select>
+  </label>
+
+  <label>Density
+    <select data-set="density">
+      <option value="comfortable">Comfortable</option>
+      <option value="compact">Compact</option>
+    </select>
+  </label>
+
+  <label>Money
+    <select data-set="money">
+      <option value="color">Semantic color</option>
+      <option value="neutral">Neutral + sign</option>
+    </select>
+  </label>
+
+  <label>Dark canvas
+    <select data-set="dark">
+      <option value="blue">Blue-black</option>
+      <option value="black">True black</option>
+      <option value="warm">Warm charcoal</option>
+    </select>
+  </label>
+
+  <span class="sep"></span>
+
+  <label>Screen
+    <select data-set="screen">
+      <option value="movements">Movements</option>
+      <option value="form">New movement</option>
+    </select>
+  </label>
+
+  <label><input type="checkbox" data-toggle="summary" checked> Summary</label>
+
+  <span class="sep"></span>
+
+  <button id="freeze" type="button">Freeze as A</button>
+  <button id="clear" type="button" hidden>Clear A</button>
+  <button id="link" type="button">Copy link</button>
+  <button id="copy" type="button">Copy tokens</button>
+  <button id="hide-probe" type="button">Hide</button>
+
+  <span class="combo" id="combo"></span>
+</div>
+<button id="show-probe" type="button" hidden>Show probe</button>
+
+<div class="stage">
+  <div class="pane is-frozen" id="frozen-pane" hidden>
+    <div class="pane-label" id="frozen-label">A · frozen</div>
+    <div id="frozen-slot"></div>
+  </div>
+
+  <div class="pane" id="live-pane">
+    <div class="pane-label" id="live-label">Live</div>
+    <div class="device"
+         data-theme="light"
+         data-palette="cobalt"
+         data-font="jakarta"
+         data-display="match"
+         data-surface="cards"
+         data-density="comfortable"
+         data-money="color"
+         data-dark="blue"
+         data-screen="movements"
+         data-summary="on">
+      <div class="phone">
+        <div class="app">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="status-icons"><span class="signal"></span><span class="wifi"></span><span class="battery"></span></span>
+          </div>
+
+          <!-- Movements -->
+          <div class="screen" id="screen-movements">
+            <header class="header">
+              <h1>Movements</h1>
+              <button class="add-pill" type="button"><svg class="ic ic-sm"><use href="#i-plus"/></svg>Add</button>
+            </header>
+
+            <section class="summary" id="summary">
+              <div class="summary-top">
+                <span class="month-pill">October</span>
+                <span class="currency-pill">COP</span>
+              </div>
+              <div class="summary-label">Net cash flow</div>
+              <div class="net-amount">+$3.428.500 <small>COP</small></div>
+              <div class="flows">
+                <div class="flow in">
+                  <div class="flow-label"><svg class="ic ic-sm"><use href="#i-arrow-down"/></svg>Money in</div>
+                  <div class="flow-amount">+$5.200.000</div>
+                </div>
+                <div class="flow out">
+                  <div class="flow-label"><svg class="ic ic-sm"><use href="#i-arrow-up"/></svg>Money out</div>
+                  <div class="flow-amount">−$1.771.500</div>
+                </div>
+              </div>
+            </section>
+
+            <div class="toolbar">
+              <label class="search">
+                <svg class="ic ic-sm"><use href="#i-search"/></svg>
+                <input type="text" placeholder="Search description">
+              </label>
+              <button class="filter" type="button" aria-label="Filters">
+                <svg class="ic"><use href="#i-filter"/></svg>
+                <span class="badge">2</span>
+              </button>
+            </div>
+
+            <div class="day">
+              <span class="day-label">Today</span>
+              <span class="day-net neg">−$80.500</span>
+            </div>
+            <div class="group">
+              <div class="row">
+                <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                <div class="row-main">
+                  <div class="row-title">Groceries</div>
+                  <div class="row-meta">Food &amp; Dining · Groceries</div>
+                  <div class="row-tags"><span class="tag">#weekly</span><span class="tag">#home</span></div>
+                </div>
+                <div class="row-amount outcome">−$42.500</div>
+              </div>
+              <div class="row">
+                <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                <div class="row-main">
+                  <div class="row-title">Taxi</div>
+                  <div class="row-meta">Transport · Airport</div>
+                  <div class="row-tags"><span class="tag">#work</span><span class="tag">#travel</span></div>
+                </div>
+                <div class="row-amount outcome">−$38.000</div>
+              </div>
+            </div>
+
+            <div class="day">
+              <span class="day-label">Yesterday</span>
+              <span class="day-net pos">+$4.185.000</span>
+            </div>
+            <div class="group">
+              <div class="row">
+                <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                <div class="row-main">
+                  <div class="row-title">Salary</div>
+                  <div class="row-meta">Income · Tech consultancy</div>
+                  <div class="row-tags"><span class="tag">#work</span><span class="tag">#main</span></div>
+                </div>
+                <div class="row-amount income">+$4.250.000</div>
+              </div>
+              <div class="row">
+                <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                <div class="row-main">
+                  <div class="row-title">Coffee &amp; Bakery</div>
+                  <div class="row-meta">Food &amp; Dining · Breakfast</div>
+                  <div class="row-tags"><span class="tag">#team</span></div>
+                </div>
+                <div class="row-amount outcome">−$65.000</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <div class="screen form-screen" id="screen-form" hidden>
+            <div class="sheet-grabber"></div>
+            <header class="form-header">
+              <h1>New movement</h1>
+              <button class="cancel" type="button">Cancel</button>
+            </header>
+
+            <div class="segmented" role="tablist" aria-label="Type">
+              <button class="seg active" type="button"><span class="dot"></span>Outcome</button>
+              <button class="seg" type="button"><span class="dot"></span>Income</button>
+              <button class="seg" type="button"><span class="dot"></span>Transfer</button>
+            </div>
+
+            <section class="amount-card">
+              <div class="amount-label">Amount</div>
+              <div class="amount-line">
+                <span class="symbol">$</span>
+                <span class="value">42.500</span>
+                <span class="cop">COP</span>
+              </div>
+            </section>
+
+            <div class="section-label">Classification</div>
+            <div class="panel">
+              <div class="line">
+                <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                <div class="line-main">
+                  <div class="line-label">Category</div>
+                  <div class="line-value">Food &amp; Dining</div>
+                </div>
+                <div class="line-trailing"><svg class="ic ic-sm"><use href="#i-chevron"/></svg></div>
+              </div>
+              <div class="line line-sub">
+                <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                <div class="line-main">
+                  <div class="line-label">Subcategory</div>
+                  <div class="line-value">Groceries</div>
+                </div>
+                <div class="line-trailing"><svg class="ic ic-sm"><use href="#i-chevron"/></svg></div>
+              </div>
+            </div>
+
+            <div class="section-label">Details</div>
+            <div class="panel">
+              <div class="line">
+                <div class="icon-tile"><svg class="ic"><use href="#i-calendar"/></svg></div>
+                <div class="line-main">
+                  <div class="line-label">Date</div>
+                  <div class="line-value">1 November 2026</div>
+                </div>
+                <div class="line-trailing"><span class="today-pill">Today</span><svg class="ic ic-sm"><use href="#i-chevron"/></svg></div>
+              </div>
+              <div class="line">
+                <div class="icon-tile"><svg class="ic"><use href="#i-pencil"/></svg></div>
+                <div class="line-main">
+                  <div class="line-label">Description</div>
+                  <div class="line-value">Lunch with team</div>
+                </div>
+              </div>
+              <div class="tag-row">
+                <div class="tag-row-head">
+                  <div class="icon-tile"><svg class="ic"><use href="#i-tag"/></svg></div>
+                  <div class="line-main">
+                    <div class="line-label">Tags</div>
+                    <div class="line-hint">Organize your movements</div>
+                  </div>
+                </div>
+                <div class="tag-list">
+                  <span class="chip">#work <button type="button" aria-label="Remove work"><svg class="ic ic-sm"><use href="#i-close"/></svg></button></span>
+                  <span class="chip">#team <button type="button" aria-label="Remove team"><svg class="ic ic-sm"><use href="#i-close"/></svg></button></span>
+                  <button class="add-tag" type="button"><svg class="ic ic-sm"><use href="#i-plus"/></svg>Add tag</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actionbar" id="form-actionbar">
+            <button class="primary-btn" type="button"><svg class="ic"><use href="#i-check"/></svg>Save movement</button>
+          </div>
+
+          <!-- Tabs (movements only) -->
+          <nav class="tabbar" aria-label="Tabs">
+            <span class="tab active"><svg class="ic"><use href="#i-list"/></svg>Movements</span>
+            <span class="tab"><svg class="ic"><use href="#i-grid"/></svg>Categories</span>
+            <span class="tab"><svg class="ic"><use href="#i-tag"/></svg>Tags</span>
+            <span class="tab"><svg class="ic"><use href="#i-settings"/></svg>Settings</span>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const body = document.body;
+  const device = document.querySelector('#live-pane .device');
+  const probe = document.getElementById('probe');
+  const showProbe = document.getElementById('show-probe');
+  const combo = document.getElementById('combo');
+  const frozenPane = document.getElementById('frozen-pane');
+  const frozenSlot = document.getElementById('frozen-slot');
+  const frozenLabel = document.getElementById('frozen-label');
+  const clearBtn = document.getElementById('clear');
+
+  const LABELS = {
+    theme: { light: 'Light', dark: 'Dark' },
+    palette: { cobalt: 'Cobalt', petrol: 'Petrol', indigo: 'Indigo', ink: 'Ink' },
+    font: { jakarta: 'Jakarta', manrope: 'Manrope', inter: 'Inter', dmsans: 'DM Sans', sora: 'Sora' },
+    display: { match: 'Display=body', jakarta: 'Display=Jakarta', serif: 'Display=Fraunces' },
+    surface: { cards: 'Cards', inset: 'Inset', border: 'Border' },
+    density: { comfortable: 'Comfortable', compact: 'Compact' },
+    money: { color: 'Color', neutral: 'Neutral' },
+    dark: { blue: 'Blue-black', black: 'True black', warm: 'Warm charcoal' },
+    screen: { movements: 'Movements', form: 'Form' },
+  };
+
+  const VARS = [
+    '--font', '--display-font',
+    '--primary', '--primary-pressed', '--primary-surface', '--accent',
+    '--canvas', '--surface', '--sunken',
+    '--ink', '--ink-secondary', '--ink-faint', '--hairline',
+    '--income', '--outcome', '--transfer', '--danger', '--on-primary', '--placeholder',
+    '--shadow', '--shadow-raised',
+  ];
+
+  const AXES = ['theme', 'palette', 'font', 'display', 'surface', 'density', 'money', 'dark', 'screen'];
+
+  function isForm() { return device.dataset.screen === 'form'; }
+
+  function syncScreen() {
+    const form = isForm();
+    device.querySelector('#screen-movements').hidden = form;
+    device.querySelector('#screen-form').hidden = !form;
+    device.querySelector('.tabbar').style.display = form ? 'none' : 'flex';
+  }
+
+  function describe() {
+    const d = device.dataset;
+    return [
+      LABELS.theme[d.theme],
+      LABELS.palette[d.palette],
+      LABELS.font[d.font],
+      LABELS.display[d.display],
+      LABELS.surface[d.surface],
+      LABELS.density[d.density],
+      LABELS.money[d.money],
+      d.theme === 'dark' ? LABELS.dark[d.dark] : null,
+    ].filter(Boolean).join(' · ');
+  }
+
+  function updateCombo() {
+    combo.textContent = describe();
+    combo.title = describe();
+  }
+
+  document.querySelectorAll('select[data-set]').forEach((select) => {
+    select.addEventListener('change', () => {
+      device.dataset[select.dataset.set] = select.value;
+      if (select.dataset.set === 'screen') syncScreen();
+      updateCombo();
+    });
+  });
+
+  const summaryToggle = document.querySelector('input[data-toggle="summary"]');
+  summaryToggle.addEventListener('change', () => {
+    device.dataset.summary = summaryToggle.checked ? 'on' : 'off';
+  });
+
+  function freeze() {
+    const clone = device.cloneNode(true);
+    clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    frozenSlot.innerHTML = '';
+    frozenSlot.appendChild(clone);
+    frozenPane.hidden = false;
+    frozenLabel.textContent = 'A · ' + describe();
+    clearBtn.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function clearFreeze() {
+    frozenSlot.innerHTML = '';
+    frozenPane.hidden = true;
+    frozenLabel.textContent = 'A · frozen';
+    clearBtn.hidden = true;
+  }
+
+  document.getElementById('freeze').addEventListener('click', freeze);
+  clearBtn.addEventListener('click', clearFreeze);
+
+  document.getElementById('link').addEventListener('click', async () => {
+    const url = new URL(location.href);
+    url.search = '';
+    AXES.forEach((key) => url.searchParams.set(key, device.dataset[key]));
+    url.searchParams.set('summary', device.dataset.summary);
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      const btn = document.getElementById('link');
+      btn.textContent = 'Copied';
+      setTimeout(() => { btn.textContent = 'Copy link'; }, 1400);
+    } catch (err) {
+      window.prompt('Copy link', url.toString());
+    }
+  });
+
+  document.getElementById('copy').addEventListener('click', async () => {
+    const cs = getComputedStyle(device);
+    const tokens = {};
+    VARS.forEach((name) => { tokens[name.replace('--', '')] = cs.getPropertyValue(name).trim(); });
+    const text = JSON.stringify({ combo: device.dataset, tokens }, null, 2);
+    try {
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('copy');
+      btn.textContent = 'Copied';
+      setTimeout(() => { btn.textContent = 'Copy tokens'; }, 1400);
+    } catch (err) {
+      window.prompt('Copy tokens', text);
+    }
+  });
+
+  document.getElementById('hide-probe').addEventListener('click', () => {
+    probe.hidden = true;
+    showProbe.hidden = false;
+  });
+
+  showProbe.addEventListener('click', () => {
+    probe.hidden = false;
+    showProbe.hidden = true;
+  });
+
+  // Read a shared combo from the URL.
+  const params = new URLSearchParams(location.search);
+  AXES.forEach((key) => {
+    const value = params.get(key);
+    const valid = Array.from(document.querySelectorAll('select[data-set="' + key + '"] option'))
+      .some((option) => option.value === value);
+    if (valid) device.dataset[key] = value;
+  });
+  if (params.get('summary') === 'off') {
+    device.dataset.summary = 'off';
+    summaryToggle.checked = false;
+  }
+  document.querySelectorAll('select[data-set]').forEach((select) => {
+    select.value = device.dataset[select.dataset.set];
+  });
+
+  syncScreen();
+  updateCombo();
+</script>
+</body>
+</html>

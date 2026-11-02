@@ -1,11 +1,12 @@
 import { ActivityIndicator } from 'react-native';
 
-import { colors } from '@/theme';
+import { useColors } from '@/lib/theme';
 
 type SpinnerProps = {
   size?: 'small' | 'large';
 };
 
 export function Spinner({ size = 'large' }: SpinnerProps) {
-  return <ActivityIndicator size={size} color={colors.primary} />;
+  const colors = useColors();
+  return <ActivityIndicator size={size} color={colors.primary} testID="spinner" />;
 }

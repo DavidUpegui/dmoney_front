@@ -8,7 +8,8 @@ import {
   View,
 } from 'react-native';
 
-import { colors, control, radius, spacing, type } from '@/theme';
+import { useColors } from '@/lib/theme';
+import { radius, type } from '@/theme';
 import { ThemedText } from './themed-text';
 
 type TextInputFieldProps = TextInputProps & {
@@ -26,14 +27,19 @@ export function TextInput({
   onBlur,
   ...props
 }: TextInputFieldProps) {
+  const colors = useColors();
   const [focused, setFocused] = useState(false);
+
+  const borderColor = error != null ? colors.danger : focused ? colors.primary : colors.hairline;
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText variant="subhead">{label}</ThemedText>
+      <ThemedText variant="label" tone="secondary">
+        {label}
+      </ThemedText>
       <RNTextInput
         accessibilityLabel={label}
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={colors.placeholder}
         onFocus={(event) => {
           setFocused(true);
           onFocus?.(event);
@@ -44,14 +50,18 @@ export function TextInput({
         }}
         style={[
           styles.input,
-          focused && styles.inputFocused,
-          error != null && styles.inputError,
+          {
+            backgroundColor: colors.sunken,
+            borderColor,
+            color: colors.ink,
+          },
+          props.multiline && styles.multiline,
           style,
         ]}
         {...props}
       />
       {error != null ? (
-        <ThemedText variant="caption" style={styles.error}>
+        <ThemedText variant="caption" tone="danger">
           {error}
         </ThemedText>
       ) : null}
@@ -61,27 +71,19 @@ export function TextInput({
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.xs,
+    gap: 6,
   },
   input: {
     ...type.body,
-    minHeight: control.md,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: radius.md,
+    minHeight: 48,
+    borderRadius: radius.lg,
     borderCurve: 'continuous',
     borderWidth: 1,
-    borderColor: 'transparent',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    color: colors.text,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
-  inputFocused: {
-    borderColor: colors.primary,
-  },
-  inputError: {
-    borderColor: colors.danger,
-  },
-  error: {
-    color: colors.danger,
+  multiline: {
+    minHeight: 96,
+    textAlignVertical: 'top',
   },
 });

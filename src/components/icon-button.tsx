@@ -1,13 +1,10 @@
-import { type ComponentProps } from 'react';
 import { Pressable, type StyleProp, type ViewStyle } from 'react-native';
-import { SymbolView } from 'expo-symbols';
 
-import { colors, radius, spacing } from '@/theme';
-
-type SymbolName = ComponentProps<typeof SymbolView>['name'];
+import { radius, spacing } from '@/theme';
+import { Icon, type IconName } from './icon';
 
 type IconButtonProps = {
-  name: SymbolName;
+  name: IconName;
   accessibilityLabel: string;
   onPress?: () => void;
   disabled?: boolean;
@@ -41,7 +38,7 @@ export function IconButton({
         style,
       ]}
     >
-      <SymbolView name={name} tintColor={colors.text} size={24} />
+      <Icon name={name} size={24} tone={disabled ? 'faint' : 'default'} />
     </Pressable>
   );
 }

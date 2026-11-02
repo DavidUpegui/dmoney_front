@@ -1,179 +1,102 @@
-# Feature: Movements
+# Movements
 
-- **Status:** `draft`
-- **Folder:** `005-movements`
-- **Related area:** `tracker`
+A movement is a financial transaction owned by the user: amount, type, category,
+subcategory, date, optional description and tags. The home tab lists them and
+the form sheets create/edit/delete them.
 
-## UI / UX Directives
+## UI / UX Directives (temporary)
 
-Applies to every screen in this feature. Before writing UI code, load the skills
-`frontend-design`, `expo-design-system`, `expo-native-ui`, `expo-ui`,
-`expo-animation`, `vercel-react-native-skills` (and `web-design-guidelines` for
-the web target), routing the work through `expo-overview`.
+> These directives will move to `docs/ui.md` in a later pass. Until then they
+> stay here and are not duplicated in other specs.
 
-- **Tokens only** — every color, space, radius, type size, and motion value comes
-  from `@/theme`; no hardcoded values in screens or components.
-- **Spacing rhythm** — 4-pt grid; screens pad 20 horizontally; group related
-  fields into inset sections; separate with `gap`, not ad-hoc margins.
-- **Typography** — one system type scale; build hierarchy with weight and color
-  before size; money uses tabular figures.
-- **Native controls first** — reach for `@expo/ui` (sheets, pickers, switches,
-  grouped rows, form sections) before RN built-ins or community libraries;
-  native stack + `NativeTabs` for navigation; `Pressable` over Touchables.
-- **Semantic color** — light/dark via `Color` from `expo-router`; income and
-  outcome use their tokens.
-- **Four states** — data screens implement loading / error / empty / content;
-  empty states invite an action.
-- **Motion** — user-triggered feedback only (press, reveal, confirm); animate
-  transform/opacity; respect reduced motion; no decorative entrances.
-- **Accessibility** — labelled fields and controls, roles, visible focus,
-  contrast, Dynamic Type.
-- **Copy** — sentence case, active voice, the user's vocabulary; errors state
-  what happened and how to fix it.
+- **Tokens only** — every color, space, radius, type size and motion value comes
+  from `@/theme`; no hardcoded values.
+- **Spacing rhythm** — 4-pt grid; screens pad 20; inset grouped sections.
+- **Typography** — one scale; hierarchy from weight and color; money uses
+  tabular figures.
+- **Native controls first** — `Pressable` over Touchables; form sheets.
+- **Four states** — collection screens implement loading / error / empty /
+  content.
+- **Motion** — user-triggered feedback only; respect reduced motion.
+- **Accessibility** — labelled fields and controls; readable errors.
+- **Copy** — sentence case, active voice; errors state what happened.
 
-## 1. Overview
+## Requirements
 
-The core of the app: create, list (with filters), edit, and delete movements.
-A movement ties an amount, a category (and optional subcategory), a type
-(`INCOME` | `OUTCOME` | `TRANSFER`), an optional description, a date, and a set
-of tags. The list is the home tab and supports filtering by category,
-subcategory, tags, type, date range, and free-text search.
+- **FMOV01** — The home tab lists the user's movements grouped by date, with
+  amount, category/subcategory and tags.
+- **FMOV02** — When there are no movements, the list shows an empty state with a
+  create action; with active filters it shows “No matching movements”.
+- **FMOV03** — The list can be filtered by categories, subcategories, tags,
+  type, inclusive date range and description search.
+- **FMOV04** — The filter sheet applies and clears filters, and the list
+  refreshes with the new filters.
+- **FMOV05** — A movement can be created with type, category, subcategory,
+  amount, date, optional description and tags; invalid input is inline and the
+  submit is disabled while pending.
+- **FMOV06** — A movement can be edited; the form is prefilled, only the fields
+  present change, and the list/detail refresh.
+- **FMOV07** — Deleting a movement asks for confirmation, removes it and
+  refreshes the list.
+- **FMOV08** — Mutations invalidate the list and the movement detail.
+- **FMOV09** — API errors are shown inline with the server message.
+- **FMOV10** — The header opens the create sheet and a row opens the edit sheet.
+- **FMOV11** — Amounts are rendered with `formatAmount` (COP, tabular figures,
+  signed by type).
 
-Actors: the authenticated user, reviewing and recording their money flows.
+`FSYS01`, `FSYS02` and `FSYS03` cover the four states, the 401 redirect and the
+server message; they are not repeated here.
 
-## 2. Requirements
+## Routes & Screens
 
-### Functional (FR)
+| Screen | Route | States |
+|--------|-------|--------|
+| `MovementList` | `/` | loading, error, empty, content |
+| `MovementForm` (create) | `/movements/new` | form, pending, server error |
+| `MovementForm` (edit) | `/movements/[id]/edit` | loading, error, form, pending, server error |
 
-- **FR-1** — List movements (`GET /api/movements`) as the home tab, showing
-  amount (signed by type), category/subcategory name, date, and tags.
-- **FR-2** — Filter the list by `categoryIds`, `subcategoryIds`, `tagIds`
-  (repeatable), `type`, `dateFrom`, `dateTo`, and `search` (free-text on
-  description).
-- **FR-3** — Create a movement (`POST /api/movements`) with required
-  `categoryId`, `subcategoryId`, `amount` (> 0), `type`, `date`; optional
-  `description` (≤ 500) and `tagIds`.
-- **FR-4** — Edit a movement (`PATCH /api/movements/{id}`); all fields
-  optional, only provided fields update.
-- **FR-5** — Delete a movement (`DELETE /api/movements/{id}`) after
+- The home tab groups movements by date, newest first, with a day balance.
+- The list resolves category/subcategory/tag names client-side from the
+  corresponding queries.
+- Create/edit are form sheets; delete lives on the edit sheet behind a
   confirmation.
-- **FR-6** — Category/subcategory pickers are populated from
-  `useCategories`/`useSubcategories`; tag picker from `useTags`.
-- **FR-7** — Mutations invalidate the movements list so the home tab stays
-  current.
 
-### Non-functional (NFR)
+## API Consumption
 
-- **NFR-1** — The list implements the four states (loading/error/empty/content).
-- **NFR-2** — Amount is always shown via `formatAmount` (COP).
-- **NFR-3** — Filter state is local UI state (not persisted server-side).
-- **NFR-4** — Accessibility: sortable/filterable list is reachable and readable.
-
-## 3. Navigation & Routes
-
-```
-src/app/
-  (tabs)/
-    index.tsx                          # / — movements list + filter bar + FAB
-  movements/
-    new.tsx                            # /movements/new — create (modal)
-    [id].tsx                           # /movements/[id] — detail (optional)
-    [id]/edit.tsx                      # /movements/[id]/edit — edit (modal)
-```
-
-- The movements list is the home tab (`/`).
-- Create/edit present as modal sheets with a full form (category →
-  subcategory → type → amount → date → description → tags).
-
-## 4. Screens & UI
-
-| Screen | Route | States & affordances |
-|--------|-------|----------------------|
-| `MovementList` | `/` | loading → spinner; empty → "Sin movimientos" + Create; error → retry; content → grouped-by-date list |
-| `MovementForm` | `/movements/new`, `[id]/edit` | cascading category→subcategory; inline validation; save disabled while pending |
-| `MovementDetail` | `/movements/[id]` | shows full movement; edit/delete actions (optional slice) |
-
-Reusable: `Card`, `Button`, `TextInput`, `EmptyState`, `ErrorState`, `Spinner`,
-`FilterBar`, `TypeBadge`, `AmountText`.
-
-## 5. Data Fetching & API
-
-| Method | Path | Query / Mutation | Cache key |
-|--------|------|------------------|-----------|
-| `GET` | `/api/movements` | `useMovements` | `['movements', filters]` |
-| `GET` | `/api/movements/{id}` | `useMovement` | `['movements', id]` |
-| `POST` | `/api/movements` | `useCreateMovement` | invalidates `['movements']` |
-| `PATCH` | `/api/movements/{id}` | `useEditMovement` | invalidates `['movements']`, `['movements', id]` |
-| `DELETE` | `/api/movements/{id}` | `useDeleteMovement` | invalidates `['movements']` |
+| Method | Path | Req | Hook | Cache key |
+|--------|------|-----|------|-----------|
+| `GET` | `/api/movements` | FMOV01, FMOV03 | `useMovements` | `['movements', filters]` |
+| `GET` | `/api/movements/{id}` | FMOV06 | `useMovement` | `['movements', id]` |
+| `POST` | `/api/movements` | FMOV05 | `useCreateMovement` | invalidates `['movements']` |
+| `PATCH` | `/api/movements/{id}` | FMOV06 | `useEditMovement` | invalidates `['movements']`, `['movements', id]` |
+| `DELETE` | `/api/movements/{id}` | FMOV07 | `useDeleteMovement` | removes detail, invalidates list |
 
 Filter params map to query-string arrays (`?categoryIds=a&categoryIds=b`) and
 single values (`type`, `dateFrom`, `dateTo`, `search`).
 
-### Request / Response examples
-
-```json
-POST /api/movements
-{
-  "categoryId": "uuid",
-  "subcategoryId": "uuid",
-  "amount": 42.5,
-  "type": "OUTCOME",
-  "description": "Lunch",
-  "date": "2026-10-08",
-  "tagIds": ["uuid"]
-}
-→ 201 (Location: /api/movements/{id})
-{
-  "movementId": "uuid", "categoryId": "uuid", "subcategoryId": "uuid",
-  "amount": 42.5, "type": "OUTCOME", "description": "Lunch",
-  "date": "2026-10-08", "tagIds": ["uuid"]
-}
-```
-
-```json
-PATCH /api/movements/{id}
-{ "amount": 50.0, "description": "Dinner" }
-→ 200 { "...": "updated movement" }
-```
-
-> **Field note:** requests and responses both use `tagIds` for the tag
-> identifier list.
-
-### Status code → UI mapping
+### Status → UI
 
 - `200/201` — content / success
-- `204` — deleted → refresh list
-- `400` — validation error (bad enum/ID, amount ≤ 0) → inline `message`
-- `401` — redirect to login (global)
-- `404` — movement/category/tag not found or belongs to another user → error
-- `5xx` — retryable error
+- `204` — deleted, refresh the list
+- `400` — inline validation
+- `401` — clear session and redirect (global, `FSYS02`)
+- `404` — error state
+- `5xx` — retryable error state
 
-## 6. Data Model
+## Local model
 
 ```ts
+type MovementType = 'INCOME' | 'OUTCOME' | 'TRANSFER';
 type Movement = {
   movementId: string;
   categoryId: string;
   subcategoryId: string;
-  amount: number;          // positive decimal
-  type: MovementType;      // 'INCOME' | 'OUTCOME' | 'TRANSFER'
-  description: string;     // ≤ 500 chars
-  date: string;            // 'yyyy-MM-dd'
-  tagIds: string[];
-};
-
-type CreateMovementRequest = {
-  categoryId: string;
-  subcategoryId: string;
   amount: number;
   type: MovementType;
-  description?: string;
+  description: string;
   date: string;
-  tagIds?: string[];
+  tagIds: string[];
 };
-
-type EditMovementRequest = Partial<CreateMovementRequest>;
-
 type MovementFilters = {
   categoryIds?: string[];
   subcategoryIds?: string[];
@@ -185,59 +108,12 @@ type MovementFilters = {
 };
 ```
 
-## 7. Business Rules & Validation
+Amount must be > 0; date is `YYYY-MM-DD`; description max 500; category and
+subcategory are required and cascading.
 
-- **BR-1** — `amount` must be a positive number (> 0).
-- **BR-2** — `type` is one of `INCOME` | `OUTCOME` | `TRANSFER`.
-- **BR-3** — `description` ≤ 500 chars.
-- **BR-4** — `date` is `yyyy-MM-dd`.
-- **BR-5** — A movement requires a valid `categoryId`; `subcategoryId` must
-  belong to that category (backend enforces; client mirrors by only offering
-  that category's subcategories).
-- **BR-6** — Selected tags must be the user's own tags.
-- **BR-7** — Category type (`INCOME`/`OUTCOME`) and movement type may differ
-  only for `TRANSFER` (no account concept; see Out of Scope).
-- **BR-8** — Filters combine with AND semantics; `search` matches description.
-- **BR-9** — Outgoing amounts display negatively (`- $ 12.500`), income
-  positively, in the list.
+## Out of Scope
 
-## 8. Edge Cases
-
-- Empty movement list → empty state with Create action.
-- No subcategories for a category → allow movement without subcategory (or
-  show a hint) — surface backend error if it rejects.
-- Amount `0` or negative → client-side validation blocks submit.
-- Invalid category/subcategory/tag ID (deleted since) → backend `404`/`400`,
-  shown inline.
-- Rapid double-tap on save → disabled while pending.
-- Filter yields no results → "Sin resultados" empty state with clear-filters.
-
-## 9. Acceptance Criteria
-
-- **AC-1** — Given movements exist, when opening `/`, then they are listed
-  with amount, type, date, and category.
-- **AC-2** — Given no movements, when opening `/`, then an empty state with a
-  Create action is shown.
-- **AC-3** — Given a valid create form, when submitted, then `201` is returned
-  and the list refreshes to include it.
-- **AC-4** — Given an amount ≤ 0, when submitting, then it is rejected
-  client-side.
-- **AC-5** — Given a filter (e.g. `type=OUTCOME`), when applied, then only
-  matching movements are shown.
-- **AC-6** — Given a date range filter, when applied, then movements within
-  the inclusive range are shown.
-- **AC-7** — Given a `search` term, when applied, then only movements whose
-  description matches are shown.
-- **AC-8** — Given an edit form, when a field changes and saves, then `PATCH`
-  updates it and the list reflects it.
-- **AC-9** — Given a delete confirmation, when confirmed, then `204` is
-  returned and the movement disappears.
-
-## 10. Out of Scope
-
-- **TRANSFER semantics**: there is no account/transfer-source concept in the
-  backend; `TRANSFER` is treated as a plain type label. Real transfers are
-  deferred.
-- Movement detail screen is optional (list + edit can satisfy the CRUD need).
-- Sorting/pagination (backend returns the full list; no `sort`/`page` params).
-- Charts/reports/summaries.
+- Pagination and ordering from the server; the list groups client-side.
+- Enriching the response with names; the client resolves them.
+- Multi-currency; COP only.
+- Visual polish and manual cross-device checks; deferred to `docs/ui.md`.

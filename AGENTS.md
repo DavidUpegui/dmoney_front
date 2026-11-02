@@ -26,11 +26,21 @@ tasks (routing, data fetching, EAS, upgrades, etc.), load the relevant skill bef
 Route every Expo/EAS task through `expo-overview` first to detect the SDK version and the right
 leaf skill.
 
-## Spec-Driven Development
+## Requirements-Driven Development
 
-Development is **spec-first**: no code without a spec. Feature specs live in `specs/`
-(`spec.md` → `plan.md` → `tasks.md`), split by vertical slice. Use the `spec-writer` skill
-(`.opencode/skills/spec-writer/SKILL.md`) to write, revise, or scaffold specs.
+No UI behaviour without a requirement. Each capability has a spec in `specs/`
+(`spec.md` + `tasks.md`) with numbered requirements (`FTAG01`, `FAUTH01`,
+`FSYS01`). A requirement is done only when its `tasks.md` block closes with
+`Validado` and `npm run requirements` is green. See `specs/README.md` and
+`docs/testing.md`.
+
+The workflow has three phases, one skill each:
+
+1. **Context** (`dmoney-context`) — read the area and report what exists. No writes.
+2. **Requirements** (`dmoney-requirements`) — elicit or change IDs in `spec.md`. No code.
+3. **Delivery** (`dmoney-delivery`) — one ID at a time, TDD with RNTL, `Validado` with green tests.
+
+If it is unclear which phase a request belongs to, ask before acting.
 
 ## Project Structure
 
@@ -56,6 +66,7 @@ src/
 - **Run**: `npm start` (Expo Go) · `npm run web` (Expo Web) · `npm run ios` / `npm run android`
 - **Lint**: `npm run lint` (`expo lint`) · **Typecheck**: `npm run typecheck` (`tsc --noEmit`)
 - **Test**: `npm test` (jest-expo); tests are colocated (`*.test.ts(x)` next to the source)
+- **Requirements audit**: `npm run requirements` · **Verify**: `npm run verify` (typecheck + lint + audit)
 - **Install deps**: `npx expo install <pkg>` (never raw `npm add` for Expo packages)
 - **Naming**: kebab-case files; one named export per component; styles colocated via `StyleSheet.create`
 - **Styling**: tokens from `@/theme` only — no hardcoded colors/spacing/font sizes in screens
@@ -63,5 +74,6 @@ src/
 
 ## Notes
 
-- The back-end is a separate repository/concern; the shared HTTP contract lives in
-  the root `API_CONTRACT.md`.
+- The back-end is a separate repository/concern. The shared HTTP contract lives
+  in `../dmoney_platform/contracts/API_CONTRACT.md`; the detailed reference is
+  `../dmoney_back/docs/api.md`.
